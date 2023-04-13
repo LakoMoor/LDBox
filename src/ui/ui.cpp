@@ -14,12 +14,9 @@ bool launchGame(const char* gamePath) {
 
 void UI::Launcher(bool* m_show)
 {
-    const char* games[] = { "Game 1", "Game 2", "Game 3" };
-    int selectedGame = 0;
-    char gamePath[256] = "";
     bool showGameDetails = false;
     
-    static ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings;
+    static ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse;
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(true ? viewport->WorkPos : viewport->Pos);
     ImGui::SetNextWindowSize(true ? viewport->WorkSize : viewport->Size);
@@ -33,51 +30,23 @@ void UI::Launcher(bool* m_show)
 
         ImGui::Text("GAMES");
 
-        // Add list of games
-        ImGui::BeginChild("GameList", ImVec2(350, 400), true, ImGuiWindowFlags_HorizontalScrollbar);
-        for (int i = 0; i < IM_ARRAYSIZE(games); i++) {
-            if (ImGui::Selectable(games[i], selectedGame == i, ImGuiSelectableFlags_AllowDoubleClick)) {
-                if (ImGui::IsMouseDoubleClicked(0)) {
-                    const char* pathToLaunch = games[i];
-                    if (!launchGame(pathToLaunch)) {
-                        ImGui::OpenPopup("Error");
-                    }
-                }
-                else {
-                    selectedGame = i;
-                    showGameDetails = true;
-                }
-            }
-        }
-        ImGui::EndChild();
-
         // Add game details panel
         ImGui::SameLine();
         ImGui::BeginGroup();
         ImGui::Spacing();
-        ImGui::Text("Publisher: Example Publisher");
-        ImGui::Text("Developer: Example Developer");
-        ImGui::Text("Release Date: 01/01/2022");
+
         ImGui::Spacing();
+        auto windowWidth = ImGui::GetWindowSize().x;
+        auto textWidth   = ImGui::CalcTextSize("Play").x;
+
+        ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
         if (ImGui::Button("Play", ImVec2(150, 50))) {
-            const char* pathToLaunch = games[selectedGame];
-            if (!launchGame(pathToLaunch)) {
-                ImGui::OpenPopup("Error");
-            }
+
         }
         if (ImGui::Button("Exit", ImVec2(150, 50))) {
             return;
         }
         ImGui::EndGroup();
-
-        // Add error popup if launch fails
-        if (ImGui::BeginPopupModal("Error", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGui::Text("Failed to launch game!");
-            if (ImGui::Button("OK", ImVec2(100, 30))) {
-                ImGui::CloseCurrentPopup();
-            }
-            ImGui::EndPopup();
-        }
 
         // End Dear ImGui window
         ImGui::End();
@@ -87,7 +56,7 @@ void UI::Launcher(bool* m_show)
 void UI::DebugMenu(float* _R, float* _G, float* _B)
 {
     
-    if(ImGui::Begin("DebugMenu", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings))
+    if(ImGui::Begin("DebugMenu", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse))
         {  
             static float col[3] = {0.1f,0.1f,0.1f}; 
             ImGui::Text("Hello World");
@@ -105,10 +74,10 @@ void UI::DebugMenu(float* _R, float* _G, float* _B)
 void UI::About(bool* m_show)
 {
 
-        ImGui::Begin("About", m_show, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize );
+        ImGui::Begin("About", m_show, ImGuiWindowFlags_NoCollapse);
 
-        ImGui::Text("This program was developed by OpenAI");
-        ImGui::TextWrapped("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.");
+        ImGui::Text("Copyright (c) 2023 LakoMoor");
+        ImGui::TextWrapped("MIT License\n\nCopyright (c) 2023 LakoMoor\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the 'Software'), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.");
 
         ImGui::Spacing();
 

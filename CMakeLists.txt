@@ -22,9 +22,9 @@ link_directories(vendor/glm)
 include_directories(vendor/glm)
 
 #assimp
-add_subdirectory(vendor/assimp)
-include_directories(vendor/assimp/include)
-link_directories(vendor/assimp/lib)
+#add_subdirectory(vendor/assimp)
+#include_directories(vendor/assimp/include)
+#link_directories(vendor/assimp/lib)
 
 
 
@@ -45,7 +45,6 @@ target_link_libraries(
         LDBox PUBLIC 
         glfw 
         glad 
-        assimp
         glm
         #vulkan
         )
