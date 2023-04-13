@@ -19,7 +19,7 @@ The project was originally conceived to create a [Steam](https://store.steampowe
 
 # Getting started
 ## Building ReadMe
-[Building](docs/README.MD)
+[Building](docs/README.md)
 
 # State
 A Work-In-Progress.
