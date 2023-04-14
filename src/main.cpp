@@ -90,20 +90,20 @@ int main(int argc, char *argv[])
 
         //Загрузка ИмГуи
         UI::DrawImGui();
-        ImGui::ShowStyleEditor();
+
         if(show_imgui)
             UI::HeaderMenu();
         if(show_debug)
             UI::DebugMenu(&R, &G, &B); 
-        if(word == "--dev")
+        if(word == "-dev")
         {
-            // ???
+           show_debug = true;
+           UI::HeaderMenu();
         } 
         else
         {
             UI::Launcher(&show_launcher);
         }
-        ImGui::ShowUserGuide();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
