@@ -1,6 +1,11 @@
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../imgui/imgui_impl_glfw.h"
 #include "../FileBrowser/ImGuiFileBrowser.h"
+#include <iostream>
+
+
+#define URL_API "https://api.github.com/repos/LakoMoor/LDBox"
+#define URL "https://github.com/LakoMoor/LDBox"
 
 
 class UI
