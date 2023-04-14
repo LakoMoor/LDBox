@@ -1,6 +1,5 @@
 #include "ui.h"
 
-#include <iostream>
 #include <string>
 #include <fstream>
 
@@ -13,6 +12,10 @@ static bool show_app_launcher = false;
 
 imgui_addons::ImGuiFileBrowser file_dialog;
 
+cpr::Response response = cpr::Get(cpr::Url{URL_API});
+std::string json = response.text;
+const char *jsonch = json.c_str();
+
 void UI::Launcher(bool* m_show)
 {    
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse;
@@ -24,17 +27,16 @@ void UI::Launcher(bool* m_show)
     if(ImGui::Begin("Launcher", m_show, flags))
     {  
         ImVec4* colors = ImGui::GetStyle().Colors;
-        colors[ImGuiCol_WindowBg]               = ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
+        colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
 
         auto windowWidth = ImGui::GetWindowSize().x;
-        auto textWidth   = ImGui::CalcTextSize("Play").x;
-
-        ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-
+        auto windowHeight = ImGui::GetWindowSize().y;
+        ImGui::SetCursorPosX((windowWidth) * 0.5f);
+        ImGui::SetCursorPosY((windowHeight)*0.5f);
+        
         if (ImGui::Button("Play")) 
         {
-            cpr::Response response = cpr::Get(cpr::Url{"https://api.github.com/repos/LakoMoor/LDBox"});
-            std::string json = response.text;
+            
             std::cout<<json;
             std::ofstream jsapi("jsapi.json");
             jsapi<<json;
@@ -42,18 +44,22 @@ void UI::Launcher(bool* m_show)
             ImGui::OpenPopup("JSON");
         }
 
-        auto textWidthExit   = ImGui::CalcTextSize("Exit").x;
-
-        ImGui::SetCursorPosX((windowWidth - textWidthExit) * 0.5f);
+        ImGui::SetCursorPosX((windowWidth) * 0.5f);
         if (ImGui::Button("Exit")) 
         {
-            UI::openurl("https://github.com/LakoMoor/LDBox");
+            UI::openurl(URL);
             exit(0);
         }
+
+        //JSON Window
         if (ImGui::BeginPopupModal("JSON", NULL, ImGuiWindowFlags_NoResize| ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse)) 
         {
         // Draw popup contents.
         ImGui::Text("File created!");
+        ImGui::BeginChild(1, ImVec2(420,228), true);
+        ImGui::TextWrapped("%s",jsonch);
+	    ImGui::EndChild();
+        
         if (ImGui::Button("OK"))
             ImGui::CloseCurrentPopup();
         ImGui::EndPopup();
