@@ -32,7 +32,7 @@ make
 ## Windows
 For launch use ```LDBox.exe```. For Dev mode use cmd and write
 ```shell
-LDBox.exe --dev
+LDBox.exe -dev
 ```
 ## Linux
 For launch use 
@@ -41,7 +41,7 @@ For launch use
 ```
 For Dev mode use
 ```shell
-./LDBox.exe --dev
+./LDBox.exe -dev
 ```
 #
 `README will be update!`
