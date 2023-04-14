@@ -11,7 +11,7 @@
 ## Linux
 
 ```shell
-sudo apt install git cmake build-essential clang -y
+sudo apt install git cmake build-essential clang openssl -y
 ```
 
 #
@@ -27,5 +27,21 @@ cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make
 ```
-
+#
+# Start application
+## Windows
+For launch use ```LDBox.exe```. For Dev mode use cmd and write
+```shell
+LDBox.exe --dev
+```
+## Linux
+For launch use 
+```shell 
+./LDBox
+```
+For Dev mode use
+```shell
+./LDBox.exe --dev
+```
+#
 `README will be update!`
