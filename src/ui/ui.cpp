@@ -23,21 +23,19 @@ void UI::Launcher(bool* m_show)
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(true ? viewport->WorkPos : viewport->Pos);
     ImGui::SetNextWindowSize(true ? viewport->WorkSize : viewport->Size);
-    
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0,0,0,0));
     if(ImGui::Begin("Launcher", m_show, flags))
     {  
-        ImVec4* colors = ImGui::GetStyle().Colors;
-        colors[ImGuiCol_WindowBg] = ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
+        //ImVec4* colors = ImGui::GetStyle().Colors;
+        //colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
 
         auto windowWidth = ImGui::GetWindowSize().x;
         auto windowHeight = ImGui::GetWindowSize().y;
         ImGui::SetCursorPosX((windowWidth) * 0.5f);
-        ImGui::SetCursorPosY((windowHeight)*0.5f);
+        ImGui::SetCursorPosY((windowHeight) * 0.5f);
         
         if (ImGui::Button("Play")) 
         {
-            
-            std::cout<<json;
             std::ofstream jsapi("jsapi.json");
             jsapi<<json;
             jsapi.close();
@@ -50,9 +48,10 @@ void UI::Launcher(bool* m_show)
             UI::openurl(URL);
             exit(0);
         }
-
+        ImGui::PopStyleColor();
+        ImGui::SetNextWindowBgAlpha(0.0f);
         //JSON Window
-        if (ImGui::BeginPopupModal("JSON", NULL, ImGuiWindowFlags_NoResize| ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse)) 
+        if (ImGui::BeginPopupModal("JSON", NULL, ImGuiWindowFlags_Popup | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse)) 
         {
         // Draw popup contents.
         ImGui::Text("File created!");
@@ -86,22 +85,28 @@ void UI::DebugMenu(float* _R, float* _G, float* _B)
             ImGui::End(); 
         }
 }
+
 void UI::About(bool* m_show)
 {
 
-        ImGui::Begin("About", m_show, ImGuiWindowFlags_NoCollapse);
+        ImGui::Begin("About", m_show, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
 
-        ImGui::Text("Copyright (c) 2023 LakoMoor");
+        ImGui::Text("LDBox");
+        ImGui::BeginChild(1, ImVec2(420,228), true);
         ImGui::TextWrapped("MIT License\n\nCopyright (c) 2023 LakoMoor\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the 'Software'), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.");
+	    ImGui::EndChild();
 
         ImGui::Spacing();
 
         ImGui::Text("Licenses:");
         ImGui::Separator();
 
-        ImGui::BulletText("License 1");
-        ImGui::BulletText("License 2");
-        ImGui::BulletText("License 3");
+        ImGui::BulletText("GLFW");
+        ImGui::BulletText("GLAD");
+        ImGui::BulletText("GLM");
+        ImGui::BulletText("Dear ImGui");
+        ImGui::BulletText("CRP");
+
 
         ImGui::Spacing();
 
@@ -130,8 +135,8 @@ void UI::HeaderMenu()
 		}
         if (ImGui::BeginMenu("Tools"))
 		{
-            if (ImGui::MenuItem("Launcher"))
-            {
+            if (ImGui::MenuItem("Style editor"))
+            {            
                 show_app_launcher = true;
             }
             ImGui::EndMenu();
@@ -157,6 +162,7 @@ void UI::HeaderMenu()
         UI::About(&show_app_about);
     }
     if(show_app_launcher){
+        ImGui::ShowStyleEditor();
     }
     
 }
@@ -167,8 +173,12 @@ void UI::InitImGui(GLFWwindow* window)
     
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable keyboard controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable docking
+    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable docking
+
+
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;    // Enable multi-viewports
+    ImVec4* colors = ImGui::GetStyle().Colors;
+
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
