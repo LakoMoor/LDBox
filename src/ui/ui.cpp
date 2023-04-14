@@ -1,5 +1,11 @@
 #include "ui.h"
+
 #include <iostream>
+#include <string>
+#include <fstream>
+
+#include <cpr/cpr.h>
+
 
 static bool show_app_about = false;
 static bool show_app_debug = false;
@@ -7,48 +13,51 @@ static bool show_app_launcher = false;
 
 imgui_addons::ImGuiFileBrowser file_dialog;
 
-bool launchGame(const char* gamePath) {
-    // Code to launch game goes here
-    return true; // Return true if game launched successfully, false otherwise
-}
-
 void UI::Launcher(bool* m_show)
-{
-    bool showGameDetails = false;
-    
+{    
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse;
+   
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(true ? viewport->WorkPos : viewport->Pos);
     ImGui::SetNextWindowSize(true ? viewport->WorkSize : viewport->Size);
+    
     if(ImGui::Begin("Launcher", m_show, flags))
     {  
-     // Add header text
-        ImGui::StyleColorsDark();
         ImVec4* colors = ImGui::GetStyle().Colors;
         colors[ImGuiCol_WindowBg]               = ImVec4(0.06f, 0.06f, 0.06f, 1.00f);
 
-
-        ImGui::Text("GAMES");
-
-        // Add game details panel
-        ImGui::SameLine();
-        ImGui::BeginGroup();
-        ImGui::Spacing();
-
-        ImGui::Spacing();
         auto windowWidth = ImGui::GetWindowSize().x;
         auto textWidth   = ImGui::CalcTextSize("Play").x;
 
         ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-        if (ImGui::Button("Play", ImVec2(150, 50))) {
 
+        if (ImGui::Button("Play")) 
+        {
+            cpr::Response response = cpr::Get(cpr::Url{"https://api.github.com/repos/LakoMoor/LDBox"});
+            std::string json = response.text;
+            std::cout<<json;
+            std::ofstream jsapi("jsapi.json");
+            jsapi<<json;
+            jsapi.close();
+            ImGui::OpenPopup("JSON");
         }
-        if (ImGui::Button("Exit", ImVec2(150, 50))) {
-            return;
-        }
-        ImGui::EndGroup();
 
-        // End Dear ImGui window
+        auto textWidthExit   = ImGui::CalcTextSize("Exit").x;
+
+        ImGui::SetCursorPosX((windowWidth - textWidthExit) * 0.5f);
+        if (ImGui::Button("Exit")) 
+        {
+            UI::openurl("https://github.com/LakoMoor/LDBox");
+            exit(0);
+        }
+        if (ImGui::BeginPopupModal("JSON", NULL, ImGuiWindowFlags_NoResize| ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse)) 
+        {
+        // Draw popup contents.
+        ImGui::Text("File created!");
+        if (ImGui::Button("OK"))
+            ImGui::CloseCurrentPopup();
+        ImGui::EndPopup();
+        }
         ImGui::End();
     }
 }
@@ -105,11 +114,11 @@ void UI::HeaderMenu()
 		{
 			if(ImGui::MenuItem("Open", NULL))
             {
-                //open = true;
+                open = true;
             }
             if(ImGui::MenuItem("Exit", NULL))
             {
-                return;
+                exit(0);
             }
 			ImGui::EndMenu();
 		}
@@ -135,14 +144,13 @@ void UI::HeaderMenu()
         ImGui::OpenPopup("Open File");
     if(file_dialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(700, 310), ".obj"))
     {
-        std::cout << file_dialog.selected_fn << std::endl;      // The name of the selected file or directory in case of Select Directory dialog mode
-        std::cout << file_dialog.selected_path << std::endl;    // The absolute path to the selected file
+        std::cout << file_dialog.selected_fn << std::endl;     
+        std::cout << file_dialog.selected_path << std::endl;    
     }
     if(show_app_about){
         UI::About(&show_app_about);
     }
     if(show_app_launcher){
-        UI::Launcher(&show_app_launcher);
     }
     
 }
