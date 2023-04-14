@@ -5,6 +5,9 @@ option(BUILD_SHARED_LIBS "Build Shared Libraries" ON)
 
 set(IMGUI_DIR src/imgui)
 
+set (CMAKE_CXX_STANDARD 17)
+
+
 
 #glfw
 add_subdirectory(vendor/glfw)
@@ -20,6 +23,11 @@ include_directories(vendor/glad/include)
 add_subdirectory(vendor/glm)
 link_directories(vendor/glm)
 include_directories(vendor/glm)
+
+#cpr
+add_subdirectory(vendor/cpr)
+include_directories(vendor/cpr/include)
+link_directories(vendor/cpr/lib)
 
 #assimp
 #add_subdirectory(vendor/assimp)
@@ -46,5 +54,6 @@ target_link_libraries(
         glfw 
         glad 
         glm
+        cpr::cpr
         #vulkan
         )
