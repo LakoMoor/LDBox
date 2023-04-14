@@ -31,6 +31,7 @@ A Work-In-Progress.
   * [GLM](https://github.com/g-truc/glm)
   * [Dear ImGui](https://github.com/ocornut/imgui)
   * [assimp](https://github.com/assimp/assimp)
+  * [CRP](https://github.com/libcpr/cpr)
 
 # License
 
