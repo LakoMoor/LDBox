@@ -1,5 +1,6 @@
-//define
+//Defines
 //#define GLFW_INCLUDE_VULKAN
+#define STB_IMAGE_IMPLEMENTATION
 
 //OpenGL
 //#include <vulkan/vulkan.h>
@@ -11,7 +12,9 @@
 #include "imgui/imgui_impl_glfw.h"
 
 //User include
+#include "ui/img.h"
 #include "ui/ui.h"
+#include "object/cube.h"
 
 //Default
 #include <cstdio>
@@ -27,7 +30,7 @@ std::string word;
 
 void processInput(GLFWwindow *window);
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {   
     
     if(argv[1] == NULL){
@@ -62,6 +65,9 @@ int main(int argc, char *argv[])
         return -1;
     } 
     //////////////////////////////////////////////////////////////////////////////
+    
+    //Picture init
+    IMGLD::imgInit("test.jpg");
 
     //IMGUI Init
     UI::InitImGui(window);
@@ -69,6 +75,7 @@ int main(int argc, char *argv[])
     glfwSwapInterval(1);
     static float R,G,B;
 
+    Cube cube;
     //////////////////////////////////////////////////////////////////////////////
     // Главный цикл приложения
     while (!glfwWindowShouldClose(window))
@@ -87,6 +94,7 @@ int main(int argc, char *argv[])
         glClear(GL_COLOR_BUFFER_BIT);
         
         // Отрисовка
+        cube.draw();
 
         //Загрузка ИмГуи
         UI::DrawImGui();
@@ -94,7 +102,7 @@ int main(int argc, char *argv[])
         if(show_imgui)
             UI::HeaderMenu();
         if(show_debug)
-            UI::DebugMenu(&R, &G, &B); 
+            UI::DebugMenu(&R, &G, &B, my_image_texture); 
         if(word == "-dev")
         {
            show_debug = true;
@@ -102,11 +110,13 @@ int main(int argc, char *argv[])
         } 
         else
         {
-            UI::Launcher(&show_launcher);
+            UI::Launcher(&show_launcher, my_image_texture);
         }
 
+        //ImGui Render TODO: Make function with UI::DrawImGui()
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         // Обновление экрана
         glfwSwapBuffers(window);
 
@@ -119,8 +129,6 @@ int main(int argc, char *argv[])
     glfwTerminate();
     return 0;
 }
-
-
 
 void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_F1)  == GLFW_PRESS && !button_pressed) {
