@@ -1,6 +1,5 @@
 #include "ui.h"
 
-
 #include <string>
 #include <fstream>
 
@@ -29,7 +28,6 @@ void UI::Launcher(bool* m_show, GLuint my_image_texture)
     {  
         //ImVec4* colors = ImGui::GetStyle().Colors;
         //colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-
         auto windowWidth = ImGui::GetWindowSize().x;
         auto windowHeight = ImGui::GetWindowSize().y;
         ImGui::SetCursorPosX((windowWidth) * 0.46f);
