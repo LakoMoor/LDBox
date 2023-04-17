@@ -1,5 +1,6 @@
 #include "ui.h"
 
+
 #include <string>
 #include <fstream>
 
@@ -16,7 +17,7 @@ cpr::Response response = cpr::Get(cpr::Url{URL_API});
 std::string json = response.text;
 const char *jsonch = json.c_str();
 
-void UI::Launcher(bool* m_show)
+void UI::Launcher(bool* m_show, GLuint my_image_texture)
 {    
     static ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse;
    
@@ -31,9 +32,12 @@ void UI::Launcher(bool* m_show)
 
         auto windowWidth = ImGui::GetWindowSize().x;
         auto windowHeight = ImGui::GetWindowSize().y;
-        ImGui::SetCursorPosX((windowWidth) * 0.5f);
+        ImGui::SetCursorPosX((windowWidth) * 0.46f);
+        ImGui::SetCursorPosY((windowHeight) * 0.1f);
+        ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(100, 100));
+
         ImGui::SetCursorPosY((windowHeight) * 0.5f);
-        
+        ImGui::SetCursorPosX((windowWidth) * 0.5f);
         if (ImGui::Button("Play")) 
         {
             std::ofstream jsapi("jsapi.json");
@@ -67,13 +71,14 @@ void UI::Launcher(bool* m_show)
     }
 }
 
-void UI::DebugMenu(float* _R, float* _G, float* _B)
+void UI::DebugMenu(float* _R, float* _G, float* _B, GLuint my_image_texture)
 {
     
     if(ImGui::Begin("DebugMenu", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse))
         {  
             static float col[3] = {0.1f,0.1f,0.1f}; 
             ImGui::Text("Hello World");
+            ImGui::Image((void*)(intptr_t)my_image_texture, ImVec2(100, 100));
             if(ImGui::Button("Hi!"))
             std::cout<<"HelloWorld"<<std::endl;
             ImGui::SeparatorText("Background Color");
@@ -189,6 +194,7 @@ void UI::DrawImGui()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    
 }
 
 void UI::DestroyImGui()
