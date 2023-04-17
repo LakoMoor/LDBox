@@ -48,9 +48,9 @@ public:
         // ------------------------------------------------------------------
         float vertices[] = {
             // positions         // colors
-            0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-            0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
+            1.5f, -1.5f, 1.0f,  1.0f, 0.0f, 0.0f,  // bottom right
+            -1.5f, -1.2f, 1.0f,  0.0f, 1.0f, 0.0f,  // bottom left
+            1.0f,  1.5f, 1.0f,  0.0f, 0.0f, 1.0f   // top 
 
          };
 
