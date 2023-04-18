@@ -1,3 +1,7 @@
+[submodule "vendor/SDL"]
+	path = vendor/SDL
+	url = https://github.com/libsdl-org/SDL
+	branch = SDL2
 [submodule "vendor/glfw"]
 	path = vendor/glfw
 	url = https://github.com/glfw/glfw
@@ -9,4 +13,4 @@
 	url = https://github.com/assimp/assimp
 [submodule "vendor/cpr"]
 	path = vendor/cpr
-	url = https://github.com/libcpr/cpr.git
+	url = https://github.com/libcpr/cpr
