@@ -7,8 +7,6 @@ set(IMGUI_DIR src/imgui)
 
 set (CMAKE_CXX_STANDARD 17)
 
-
-
 #glfw
 add_subdirectory(vendor/glfw)
 include_directories(vendor/glfw/include)
@@ -33,8 +31,6 @@ link_directories(vendor/cpr/lib)
 #add_subdirectory(vendor/assimp)
 #include_directories(vendor/assimp/include)
 #link_directories(vendor/assimp/lib)
-
-
 
 add_executable(
         LDBox
