@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0.0)
-project(LDBox VERSION 0.1.0)
+cmake_minimum_required(VERSION 3.12)
+project(LDBox VERSION 0.1.1)
 
 option(BUILD_SHARED_LIBS "Build Shared Libraries" ON) 
 
@@ -10,6 +10,11 @@ set (CMAKE_CXX_STANDARD 17)
 
 
 #glfw
+FetchContent_Declare(
+  vendor/glfw
+  GIT_REPOSITORY https://github.com/glfw/glfw.git
+  GIT_TAG 3fa2360720eeba1964df3c0ecf4b5df8648a8e52
+)
 add_subdirectory(vendor/glfw)
 include_directories(vendor/glfw/include)
 link_directories(vendor/glfw/lib)
@@ -20,11 +25,21 @@ link_directories(vendor/glad)
 include_directories(vendor/glad/include)
 
 #glm
+FetchContent_Declare(
+  vendor/glm
+  GIT_REPOSITORY https://github.com/g-truc/glm.git
+  GIT_TAG efec5db081e3aad807d0731e172ac597f6a39447
+)
 add_subdirectory(vendor/glm)
 link_directories(vendor/glm)
 include_directories(vendor/glm)
 
 #cpr
+FetchContent_Declare(
+  vendor/cpr
+  GIT_REPOSITORY https://github.com/libcpr/cpr.git
+  GIT_TAG 98b57ef3987c12c4357a2d29ad675295d55e51f8
+)
 add_subdirectory(vendor/cpr)
 include_directories(vendor/cpr/include)
 link_directories(vendor/cpr/lib)
