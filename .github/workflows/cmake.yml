@@ -24,7 +24,7 @@ jobs:
     - name: Install compiler and packages
         # Note the current convention is to use the -S and -B options here to specify source
         # and build directories, but this is only available with CMake 3.13 and higher.
-      run: sudo apt-get install git cmake build-essential clang openssl libcurl-dev -y
+      run: sudo apt-get install git cmake build-essential clang openssl curl -y
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
