@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.0.1)
 project(LDBox VERSION 0.1.1)
 
 option(BUILD_SHARED_LIBS "Build Shared Libraries" ON) 
@@ -6,6 +6,13 @@ option(BUILD_SHARED_LIBS "Build Shared Libraries" ON)
 set(IMGUI_DIR src/imgui)
 
 set (CMAKE_CXX_STANDARD 17)
+
+file(GLOB LDBOX_SRC
+    "${CMAKE_CURRENT_LIST_DIR}/src/*.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/ui/*.cpp"
+    "${CMAKE_CURRENT_LIST_DIR}/src/FileBrowser/*.cpp"
+    "${IMGUI_DIR}/*.cpp"
+)
 
 #glfw
 add_subdirectory(vendor/glfw)
@@ -34,16 +41,7 @@ link_directories(vendor/cpr/lib)
 
 add_executable(
         LDBox
-        src/main.cpp 
-        src/ui/ui.cpp
-        src/FileBrowser/ImGuiFileBrowser.cpp
-        ${IMGUI_DIR}/imgui_impl_opengl3.cpp 
-        ${IMGUI_DIR}/imgui_impl_glfw.cpp 
-        ${IMGUI_DIR}/imgui.cpp 
-        ${IMGUI_DIR}/imgui_draw.cpp 
-        ${IMGUI_DIR}/imgui_demo.cpp 
-        ${IMGUI_DIR}/imgui_tables.cpp 
-        ${IMGUI_DIR}/imgui_widgets.cpp
+        ${LDBOX_SRC}
 )
 target_link_libraries(
         LDBox PUBLIC 
