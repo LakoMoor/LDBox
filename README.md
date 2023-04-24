@@ -1,4 +1,5 @@
-# **LDBox**
+# **📦 LDBox** ![LIC](https://img.shields.io/github/license/W1lliam1337/digital-sdk) ![LANG](https://img.shields.io/badge/language-C%2B%2B-brightgreen?style=flat )
+
 
 This is an attempt to create a [Open Source](https://en.wikipedia.org/wiki/Open-source_software) project of the [Qt](https://www.qt.io/) type without using proprietary software. At the moment, one person is engaged in the project.          
 The project was originally conceived to create a [Steam](https://store.steampowered.com/about/) - like application for the LakoMoor Dev game called [**HOLODILNIK**](https://t.me/LakoMoorDev).
@@ -26,12 +27,10 @@ A Work-In-Progress.
 
 # Used libraries
 * [LDBox](https://github.com/lakomoor/LDBox)
-  * [GLFW](https://www.glfw.org/)
+  * [SDL2](https://libsdl.org/)
   * [GLAD](https://glad.dav1d.de/)
   * [GLM](https://github.com/g-truc/glm)
   * [Dear ImGui](https://github.com/ocornut/imgui)
-  * [assimp](https://github.com/assimp/assimp)
-  * [CRP](https://github.com/libcpr/cpr)
 
 # License
 
