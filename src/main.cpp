@@ -1,144 +1,57 @@
-//Defines
-//#define GLFW_INCLUDE_VULKAN
-#define STB_IMAGE_IMPLEMENTATION
-
-//OpenGL
-//#include <vulkan/vulkan.h>
-#include <glad/glad.h> 
-#include <GLFW/glfw3.h>
-
-//ImGui
-#include "imgui/imgui_impl_opengl3.h"
-#include "imgui/imgui_impl_glfw.h"
-
-//User include
-#include "ui/img.h"
-#include "ui/ui.h"
-#include "object/cube.h"
-
-//Default
-#include <cstdio>
+#include <SDL2/SDL.h>
+#include <glad/glad.h>
 #include <iostream>
 
-static bool show_launcher = true;
-bool show_imgui = false;
-bool show_debug = false;
-bool button_pressed = false;
-double button_timer = 0.0;
-double button_delay = 0.2;
-std::string word;
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
 
-void processInput(GLFWwindow *window);
+int main(int argc, char* args[])
+{
+    // Initialize SDL2
+    SDL_Init(SDL_INIT_VIDEO);
 
-int main(int argc, char **argv)
-{   
-    
-    if(argv[1] == NULL){
-        word  = " ";
-    }else{
-        word  = argv[1];
-    }
-    
-    // Инициализация GLFW
-    if (!glfwInit())
-    {
-        std::cerr << "Ошибка инициализации GLFW" << std::endl;
+    // Create a window
+    SDL_Window* window = SDL_CreateWindow("LDBox", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_OPENGL);
+
+    // Create an OpenGL context
+    SDL_GLContext glContext = SDL_GL_CreateContext(window);
+
+    // Initialize glad
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        std::cerr << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Создание окна
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "LDBox", nullptr, nullptr);
-    if (!window)
+    // Set up the viewport
+    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    // Set the clear color to black
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+    // Clear the screen with the clear color
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Swap the buffers to display the rendered frame
+    SDL_GL_SwapWindow(window);
+
+    // Wait for user to close the window
+    bool quit = false;
+    SDL_Event event;
+    while (!quit)
     {
-        std::cerr << "Ошибка создания GLFW окна" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    // Установка текущего контекста OpenGL в окно GLFW
-    glfwMakeContextCurrent(window);
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Ошибка создания  GLAD" << std::endl;
-        return -1;
-    } 
-    //////////////////////////////////////////////////////////////////////////////
-    
-    //Picture init
-    IMGLD::imgInit("test.jpg");
-
-    //IMGUI Init
-    UI::InitImGui(window);
-
-    glfwSwapInterval(1);
-    static float R,G,B;
-
-    Cube cube;
-    //////////////////////////////////////////////////////////////////////////////
-    // Главный цикл приложения
-    while (!glfwWindowShouldClose(window))
-    {
-        processInput(window);
-        double current_time = glfwGetTime();
-    glfwPollEvents();
-
-    if (button_pressed && current_time > button_timer) {
-        button_pressed = false;
-    }   
-        
-        // Очистка буфера цвета
-        glClearColor(R,G,B, 1.0f);
-        //std::cout << R << G << B <<std::endl;
-        glClear(GL_COLOR_BUFFER_BIT);
-        
-        // Отрисовка
-        cube.draw();
-
-        //Загрузка ИмГуи
-        UI::DrawImGui();
-
-        if(show_imgui)
-            UI::HeaderMenu();
-        if(show_debug)
-            UI::DebugMenu(&R, &G, &B, my_image_texture); 
-        if(word == "-dev")
+        while (SDL_PollEvent(&event))
         {
-           show_debug = true;
-           UI::HeaderMenu();
-        } 
-        else
-        {
-            UI::Launcher(&show_launcher, my_image_texture);
+            if (event.type == SDL_QUIT)
+            {
+                quit = true;
+            }
         }
-
-        //ImGui Render TODO: Make function with UI::DrawImGui()
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        // Обновление экрана
-        glfwSwapBuffers(window);
-
-        // Обработка событий
-        glfwPollEvents();
     }
-    // Освобождение ресурсов GLFW и завершение программы
-    UI::DestroyImGui();
-    glfwDestroyWindow(window);
-    glfwTerminate();
+
+    // Clean up OpenGL and SDL2
+    SDL_GL_DeleteContext(glContext);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
     return 0;
-}
-
-void processInput(GLFWwindow* window) {
-    if (glfwGetKey(window, GLFW_KEY_F1)  == GLFW_PRESS && !button_pressed) {
-        button_pressed = true;
-        button_timer = glfwGetTime() + button_delay;
-        show_imgui = !show_imgui;
-    }
-    if (glfwGetKey(window, GLFW_KEY_F5)  == GLFW_PRESS && !button_pressed) {
-        button_pressed = true;
-        button_timer = glfwGetTime() + button_delay;
-        show_debug = !show_debug;
-    }
 }
