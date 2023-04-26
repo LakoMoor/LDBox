@@ -27,7 +27,7 @@ A Work-In-Progress.
 
 # Used libraries
 * [LDBox](https://github.com/lakomoor/LDBox)
-  * [SDL2](https://libsdl.org/)
+  * [GLFW](https://glfw.org/)
   * [GLAD](https://glad.dav1d.de/)
   * [GLM](https://github.com/g-truc/glm)
   * [Dear ImGui](https://github.com/ocornut/imgui)
