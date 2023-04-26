@@ -247,9 +247,9 @@ void UI::HeaderMenu(SDL_Window* window)
 		{
             if (ImGui::MenuItem("About"))
             {
-                //show_app_about = true;
+                show_app_about = true;
                 spdlog::debug("About loaded!");
-                spdlog::warn("Empty item");
+                //spdlog::warn("Empty item");
             }
             if (ImGui::MenuItem("Fullscreen", "(F11)"))
             {
@@ -264,9 +264,9 @@ void UI::HeaderMenu(SDL_Window* window)
         }
         ImGui::EndMainMenuBar(); 
     }
-    /*if(show_app_about){
+    if(show_app_about){
         UI::About(&show_app_about);
-    }*/
+    }
     
 }
 
