@@ -30,7 +30,7 @@ public:
     //tools
     static void openurl(const char* path)
     {
-        #ifdef _WIN32
+        #ifdef _WIN322
             ::ShellExecuteA(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT);
         #else
         #if __APPLE__
