@@ -4,11 +4,10 @@
 #include "../core/render.h"
 
 #include <string>
+#include <iostream>
 #include <fstream>
 
 #include <spdlog/spdlog.h>
-#define IM_CLAMP(V, MN, MX)     ((V) < (MN) ? (MN) : (V) > (MX) ? (MX) : (V))
-
 
 static bool show_app_about = false;
 static bool hide_privew = false;
