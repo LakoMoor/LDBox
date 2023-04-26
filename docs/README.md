@@ -22,6 +22,7 @@ git clone https://github.com/LakoMoor/LDBox.git --recursive
 ```
 #### Quick start engine setup
 ```shell
+cd LDBox
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
