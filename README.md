@@ -1,4 +1,4 @@
-# **📦 LDBox** ![LIC](https://img.shields.io/github/license/W1lliam1337/digital-sdk) ![LANG](https://img.shields.io/badge/language-C%2B%2B-brightgreen?style=flat )
+# **📦 LDBox**  ![LIC](https://img.shields.io/github/license/lakomoor/ldbox) ![LANG](https://img.shields.io/badge/language-C%2B%2B-brightgreen ) ![BUILD](https://img.shields.io/github/actions/workflow/status/lakomoor/ldbox/cmake.yml)
 
 ![LDBox](docs/img.png)
 
