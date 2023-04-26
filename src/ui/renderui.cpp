@@ -1,3 +1,5 @@
+#define PROJECT_VER "0.2.8"
+
 #include "renderui.h"
 #include "../core/render.h"
 
@@ -215,6 +217,7 @@ void UI::About(bool* m_show)
         ImGui::Spacing();
 
         ImGui::Text("t.me/LakoMoorDev");
+        ImGui::Text("Version: %s", PROJECT_VER);
         ImGui::End();   
 }
 
