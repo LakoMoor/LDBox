@@ -18,7 +18,7 @@ sudo apt install git cmake build-essential clang -y
 
 #### Clone the repository 
 ```shell
-git clone https://github.com/LakoMoor/LDBox.git
+git clone https://github.com/LakoMoor/LDBox.git --recursive
 ```
 #### Quick start engine setup
 ```shell
