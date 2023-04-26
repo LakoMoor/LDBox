@@ -10,6 +10,7 @@ The project was originally conceived to create a [Steam](https://store.steampowe
 - Open source
 - Cross-platform
 - Used OpenGL
+- Based SDL2
 - Dear ImGui based
 
 
@@ -18,6 +19,8 @@ The project was originally conceived to create a [Steam](https://store.steampowe
 - Converted into a library
 - Make like Game Engine
 - Find people :D
+- Add cURL and boost
+- Build for iOS and Android
 
 # Getting started
 ## Building ReadMe
