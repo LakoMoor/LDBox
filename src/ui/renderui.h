@@ -1,6 +1,7 @@
 #include <imgui.h>
 #include <imgui_impl_sdl2.h>
 #include <imgui_impl_opengl3.h>
+#include <imgui_internal.h>
 #include <iostream>
 #include <SDL.h>
 #include <glad/glad.h>
@@ -19,6 +20,7 @@ public:
     static void About(bool* m_show);
     static void Settings(bool* m_show);
     static void Launcher(bool* m_show);
+    static void Main();
 
     //Render
     static void InitImGui(SDL_Window* window, SDL_GLContext glContext);
