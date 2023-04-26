@@ -11,7 +11,7 @@
 ## Linux
 
 ```shell
-sudo apt install git cmake build-essential clang openssl -y
+sudo apt install git cmake build-essential clang -y
 ```
 
 #
