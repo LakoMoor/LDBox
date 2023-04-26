@@ -52,8 +52,8 @@ target_include_directories(
 
 target_link_libraries(
         LDBox PUBLIC
+        SDL2main
         SDL2 
-        SDL2main 
         spdlog
         glad 
 #        glm
