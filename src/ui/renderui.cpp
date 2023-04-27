@@ -14,69 +14,8 @@ static bool hide_privew = false;
 static bool show_app_debug = false;
 static bool show_app_launcher = false;
 static float progress = 0.0f;
-static std::string select = "";
+const char* selectGame;
 
-void UI::Main()
-{
-    /*
-    if(ImGui::Begin("Launcher", m_show, flags))
-    {  
-        //ImVec4* colors = ImGui::GetStyle().Colors;
-        //colors[ImGuiCol_WindowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-        auto windowWidth = ImGui::GetWindowSize().x;
-        auto windowHeight = ImGui::GetWindowSize().y;
-        ImGui::SetCursorPosY((windowHeight) * 0.5f);
-        ImGui::SetCursorPosX((windowWidth) * 0.5f);
-        if (ImGui::Button("Play")) 
-        {
-            spdlog::debug("Button Play pressed");
-            std::ofstream jsapi("jsapi.json");
-            jsapi<<"{json:'test'}";
-            jsapi.close();
-            ImGui::OpenPopup("JSON");
-            spdlog::info("JSON saved!");
-        }
-
-        ImGui::SetCursorPosX((windowWidth) * 0.5f);
-        if (ImGui::Button("About")) 
-        {
-            spdlog::info("Load about...");
-            show_app_about = true;
-        }
-
-        ImGui::SetCursorPosX((windowWidth) * 0.5f);
-        if (ImGui::Button("Exit")) 
-        {
-            spdlog::info("Load browser...");
-            UI::openurl(URL);
-            spdlog::info("Browser load! Good bye!");
-            exit(0);
-        }
-
-
-        ImGui::PopStyleColor();
-        ImGui::SetNextWindowBgAlpha(1.0f);
-        //JSON Window
-        if (ImGui::BeginPopupModal("JSON", NULL, ImGuiWindowFlags_Popup | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse)) 
-        {
-        // Draw popup contents.
-        ImGui::Text("File created!");
-        ImGui::BeginChild(1, ImVec2(420,228), true);
-        ImGui::TextWrapped("%s","TEST");
-	    ImGui::EndChild();
-        
-        if (ImGui::Button("OK"))
-            ImGui::CloseCurrentPopup();
-        ImGui::EndPopup();
-        }
-        ImGui::End();
-    }
-    if(show_app_about){
-        UI::About(&show_app_about);
-    }
-    */
-
-}
 
 void UI::Launcher(bool* m_show)
 {    
@@ -172,10 +111,10 @@ void UI::Launcher(bool* m_show)
                 {
                     
                     item_current_idx = n;
-                    spdlog::debug(items[n]);
-                    select = items[n];
+                    //spdlog::debug(items[n]);
+                    selectGame = items[n];
                     hide_privew = true;
-                    spdlog::debug(select);
+                    spdlog::debug(selectGame);
 
                 }
                 if (ImGui::BeginPopupContextItem())
@@ -206,7 +145,7 @@ void UI::Launcher(bool* m_show)
         }
         ImGui::End();
         //spdlog::debug(select);
-        if(select == items[1])
+        if(selectGame == items[1])
         {
             ImGui::Begin("Preview", &hide_privew, ImGuiWindowFlags_NoResize);
             if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
@@ -223,7 +162,7 @@ void UI::Launcher(bool* m_show)
             ImGui::SeparatorText("News");
             ImGui::End();
         }
-        if(select == items[0])
+        if(selectGame == items[0])
         {
             ImGui::Begin("Preview", nullptr, ImGuiWindowFlags_NoResize);
             if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
@@ -254,7 +193,7 @@ void UI::Launcher(bool* m_show)
                 {
                     ImGui::TableNextColumn();
                     ImGui::SetWindowFontScale(3.0f);
-                    ImGui::Text(items[0]);
+                    ImGui::Text("%s", items[0]);
                     ImGui::SetWindowFontScale(1.0f);
                     ImGui::Separator();
                     ImGui::Text("");
@@ -273,7 +212,7 @@ void UI::Launcher(bool* m_show)
                 {
                     ImGui::TableNextColumn();
                     ImGui::SetWindowFontScale(3.0f);
-                    ImGui::Text(items[1]);
+                    ImGui::Text("%s", items[1]);
                     ImGui::SetWindowFontScale(1.0f);
                     ImGui::Separator();
                     ImGui::Text("");
