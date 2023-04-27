@@ -58,3 +58,6 @@ target_link_libraries(
         glad 
 #        glm
         )
+add_test(
+        NAME LDBox
+        COMMAND LDBox)
