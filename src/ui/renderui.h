@@ -15,11 +15,14 @@ public:
     //MenuBar
     static void HeaderMenu(SDL_Window* window);
 
+    //Launcher
+    static void Launcher(bool* m_show);
+    static void LauncherMobile(bool* m_show);
+
     //Windows
-    static void DebugMenu(float* _R, float* _G, float* _B);
+    static void DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window);
     static void About(bool* m_show);
     static void Settings(bool* m_show);
-    static void Launcher(bool* m_show);
     static void Main();
 
     //Render

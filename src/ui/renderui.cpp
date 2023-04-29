@@ -16,6 +16,210 @@ static bool show_app_launcher = false;
 static float progress = 0.0f;
 const char* selectGame;
 
+void UI::LauncherMobile(bool* m_show)
+{    
+        bool open = true;
+        
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
+        ImGui::SetNextWindowPos(true ? viewport->WorkPos : viewport->Pos);
+        ImGui::SetNextWindowSize(true ? viewport->WorkSize : viewport->Size);
+
+        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus ;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("Launcher", &open, window_flags);
+        ImGui::PopStyleVar();
+
+        ImGuiID dockspace_idMobile = ImGui::GetID("MainDockerMobile");
+
+        if (ImGui::DockBuilderGetNode(dockspace_idMobile) == NULL)
+        {
+            ImGui::DockBuilderRemoveNode(dockspace_idMobile); // Clear out existing layout
+            ImGui::DockBuilderAddNode(dockspace_idMobile, ImGuiDockNodeFlags_NoTabBar| ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_HiddenTabBar); // Add empty node
+            ImGui::DockBuilderSetNodeSize(dockspace_idMobile, ImVec2(720, 1280));
+
+            ImGuiID dock_main_idMobile = dockspace_idMobile;
+
+            ImGuiID dock_id_n1 = ImGui::DockBuilderSplitNode(dock_main_idMobile, ImGuiDir_Down, 0.1f, NULL, &dock_main_idMobile);
+            ImGuiID dock_id_n2 = ImGui::DockBuilderSplitNode(dock_main_idMobile, ImGuiDir_Down, 0.15f, NULL, &dock_main_idMobile);
+            ImGuiID dock_id_n3 = ImGui::DockBuilderSplitNode(dock_main_idMobile, ImGuiDir_Down, 0.5f, NULL, &dock_main_idMobile);
+            
+            ImGui::DockBuilderDockWindow("MainMenuMobile", dock_id_n1);
+            ImGui::DockBuilderDockWindow("GameListMobile", dock_id_n2);
+            ImGui::DockBuilderDockWindow("PreviewMobile", dock_id_n3);
+            
+            ImGui::DockBuilderFinish(dockspace_idMobile);
+        }
+   
+        ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+        ImGui::DockSpace(dockspace_idMobile, ImVec2(0.0f, 0.0f));
+        ImGui::PopStyleColor();
+        ImGui::End();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(60, 70));
+        ImGui::Begin("MainMenuMobile", nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar);
+        if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+        {
+            dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar |  ImGuiDockNodeFlags_NoResize;
+        }
+        static bool show_headers = false;
+        if (ImGui::BeginTable("table_padding", 3, ImGuiTableFlags_BordersV))
+        {
+            if (show_headers)
+            {
+                ImGui::TableSetupColumn("OneMobile");
+                ImGui::TableSetupColumn("TwoMobile");
+                ImGui::TableSetupColumn("ThreeMobile");
+                ImGui::TableHeadersRow();
+            }
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Button("Store",ImVec2(-FLT_MIN, -FLT_MIN));
+            ImGui::TableSetColumnIndex(1);
+            ImGui::Button("Library",ImVec2(-FLT_MIN, -FLT_MIN));
+            ImGui::TableSetColumnIndex(2);
+            ImGui::Button("Profile",ImVec2(-FLT_MIN, -FLT_MIN));
+            
+            ImGui::EndTable();
+        }        
+        ImGui::End();
+        
+        ImGui::Begin("GameListMobile", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
+        if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+        {
+            dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
+        }
+        const char* items[] = { "H1.5", "H2.0"};
+        
+        static int item_current_idx = 0; // Here we store our selection data as an index.
+        if (ImGui::BeginListBox("GameListMobile", ImVec2(-FLT_MIN, -FLT_MIN)))
+        {
+            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+            {
+                const bool is_selected = (item_current_idx == n);
+                if (ImGui::Selectable(items[n], is_selected))
+                {
+                    
+                    item_current_idx = n;
+                    //spdlog::debug(items[n]);
+                    selectGame = items[n];
+                    hide_privew = true;
+                    spdlog::debug(selectGame);
+
+                }
+                if (ImGui::BeginPopupContextItem())
+                {
+                    ImGui::Button("Install");
+                    ImGui::Separator();
+                    //ImGui::Text(items[n], NULL);
+                    if(ImGui::BeginMenu("Settings"))
+                    {
+                        spdlog::warn("Empty item");
+                        ImGui::MenuItem("Directory", NULL);
+                        ImGui::MenuItem("Delete", NULL);
+                        ImGui::MenuItem("Update", NULL);
+                        ImGui::EndMenu();
+                    }
+                    ImGui::Separator();
+                    if(ImGui::MenuItem("Propirtes", NULL))
+                    {
+                            exit(0);
+                    }
+                    ImGui::EndPopup();
+                }
+                // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndListBox();
+        }
+        ImGui::End();
+        //spdlog::debug(select);
+        if(selectGame == items[1])
+        {
+            ImGui::Begin("PreviewMobile", &hide_privew, ImGuiWindowFlags_NoResize);
+            if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+            {
+                dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
+            }
+            ImGui::SetWindowFontScale(3.0f);
+            ImGui::Text("HOLODILNIK 2.0");
+            ImGui::SetWindowFontScale(1.0f);
+            ImGui::Separator();
+            ImGui::Text("");
+            ImGui::Button("Install",ImVec2(125.0f, 45.0f));
+            ImGui::Text("");
+            ImGui::SeparatorText("News");
+            ImGui::End();
+        }
+        if(selectGame == items[0])
+        {
+            ImGui::Begin("PreviewMobile", nullptr, ImGuiWindowFlags_NoResize);
+            if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+            {
+                dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
+            }
+            ImGui::SetWindowFontScale(3.0f);
+            ImGui::Text("HOLODILNIK 1.5");
+            ImGui::SetWindowFontScale(1.0f);
+            ImGui::Separator();
+            ImGui::Text("");
+            ImGui::Button("Install",ImVec2(125.0f, 45.0f));
+            ImGui::Text("");
+            ImGui::SeparatorText("News");
+            ImGui::End();
+        }
+        
+        if(!hide_privew)
+        {
+            ImGui::Begin("PreviewMobile", nullptr, ImGuiWindowFlags_NoResize| ImGuiWindowFlags_NoScrollbar);
+            if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+            {
+                dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
+            }
+            ImGui::Spacing();
+            {
+                ImGui::BeginChild("ChildR2Mobile", ImVec2(-FLT_MIN, 260), true, window_flags);
+            
+                if (ImGui::BeginTable("split2Mobile", 1, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings))
+                {
+                    ImGui::TableNextColumn();
+                    ImGui::SetWindowFontScale(3.0f);
+                    ImGui::Text("%s", items[0]);
+                    ImGui::SetWindowFontScale(1.0f);
+                    ImGui::Separator();
+                    ImGui::Text("");
+                    ImGui::Button("Install",ImVec2(125.0f, 45.0f));
+                    ImGui::EndTable();
+                }
+                
+                ImGui::EndChild();
+                //ImGui::PopStyleVar();
+            }
+            {
+                ImGui::BeginChild("ChildR1Mobile", ImVec2(-FLT_MIN, 260), true, window_flags);
+            
+                if (ImGui::BeginTable("split1Mobile", 1, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings))
+                {
+                    ImGui::TableNextColumn();
+                    ImGui::SetWindowFontScale(3.0f);
+                    ImGui::Text("%s", items[1]);
+                    ImGui::SetWindowFontScale(1.0f);
+                    ImGui::Separator();
+                    ImGui::Text("");
+                    ImGui::Button("Install",ImVec2(125.0f, 45.0f));
+                    ImGui::EndTable();
+                }
+                
+                ImGui::EndChild();
+                //ImGui::PopStyleVar();
+            }       
+            ImGui::End();
+        }
+}
 
 void UI::Launcher(bool* m_show)
 {    
@@ -232,18 +436,10 @@ void UI::Launcher(bool* m_show)
         {
             dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar |  ImGuiDockNodeFlags_NoResize;
         }
-        
-
-        // Typically we would use ImVec2(-1.0f,0.0f) or ImVec2(-FLT_MIN,0.0f) to use all available width,
-        // or ImVec2(width,0.0f) for a specified width. ImVec2(0.0f,0.0f) uses ItemWidth.
-        
-        //ImGui::ProgressBar(progress, ImVec2(0.0f, 0.0f));
-        //ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
-
-        ImGui::End();
+    ImGui::End();
 }
 
-void UI::DebugMenu(float* _R, float* _G, float* _B)
+void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window)
 {
       
     if(ImGui::Begin("DebugMenu", NULL, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse))
@@ -258,6 +454,18 @@ void UI::DebugMenu(float* _R, float* _G, float* _B)
             ImGui::SliderFloat("R",_R,0.0f, 1.0f);
             ImGui::SliderFloat("G",_G,0.0f, 1.0f);
             ImGui::SliderFloat("B",_B,0.0f, 1.0f);
+            ImGui::SeparatorText("Mobile mode");
+            if(ImGui::Button("Mobile"))
+            {
+                spdlog::warn("Mobile");
+                SDL_SetWindowSize(window, 360, 640);
+            }
+            ImGui::SameLine();
+            if(ImGui::Button("PC"))
+            {
+                spdlog::warn("PC");
+                SDL_SetWindowSize(window, 1280, 720);
+            }
             ImGui::End(); 
         }
 }
