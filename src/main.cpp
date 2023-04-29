@@ -18,11 +18,17 @@
 #include <iostream>
 
 
-int main(int argc, char* args[])
+int main(int argc, char* argv[])
 {
+    if(argc==2 && !strcmp(argv[1], "-dev"))
+    {
+        debugui = !debugui;
+        spdlog::debug("DEV MODE");
+    }
     // Initialize SDL2
     Render();
     //SDL_Init(SDL_INIT_VIDEO);
+    
 
     // Create a window
     spdlog::info("Create SDL2 window");
@@ -72,7 +78,7 @@ int main(int argc, char* args[])
                     spdlog::debug("Header open case");
                     headerui = !headerui;
                     continue;
-                case SDLK_F12:
+                case SDLK_F5:
                     spdlog::debug("Debug menu open case");
                     debugui = !debugui;
                     continue;
@@ -85,7 +91,7 @@ int main(int argc, char* args[])
         }
 
         //glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        
+        SDL_GetWindowSize(window, &GET_WIDTH, &GET_HEIGHT);
         //Clear OpenGL context
         glClearColor(R,G,B, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -93,15 +99,30 @@ int main(int argc, char* args[])
         // start the Dear ImGui frame
         UI::DrawImGui(window);
         //ImGui::ShowStyleEditor();
-        UI::Launcher(&show_launcher);
+        if(GET_WIDTH<1080)
+        {
+            show_launcher = false;
+            show_launchermobile = true;
+            
+            UI::LauncherMobile(&show_launchermobile);
+        }
+        else
+        {
+            show_launcher = true;
+            show_launchermobile = false;
+
+            UI::Launcher(&show_launcher);
+        }
+        
 
         if(headerui)
         { 
             UI::HeaderMenu(window);
         }
+
         if(debugui)
         {
-            UI::DebugMenu(&R, &G, &B);
+            UI::DebugMenu(&R, &G, &B, window);
         }
 
         ImGui::Render();
