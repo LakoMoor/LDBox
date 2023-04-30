@@ -13,14 +13,15 @@ class UI
 {
 public:
     //MenuBar
-    static void HeaderMenu(SDL_Window* window);
+    static void HeaderMenu(SDL_Window* window, bool* debug);
 
     //Launcher
-    static void Launcher(bool* m_show);
-    static void LauncherMobile(bool* m_show);
+    static void Launcher(bool* m_show, GLuint textureID);
+    static void Profile();
+    static void LauncherMobile(bool* m_show,  GLuint textureID);
 
     //Windows
-    static void DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window);
+    static void DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID);
     static void About(bool* m_show);
     static void Settings(bool* m_show);
     static void Main();

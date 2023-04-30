@@ -51,6 +51,14 @@ int main(int argc, char* argv[])
     // Set up the viewport
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
+    // Create texture for rendering the SDL2 window
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
     // Wait for user to close the window
     bool quit = false;
     SDL_Event event;
@@ -92,37 +100,55 @@ int main(int argc, char* argv[])
 
         //glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         SDL_GetWindowSize(window, &GET_WIDTH, &GET_HEIGHT);
+
         //Clear OpenGL context
         glClearColor(R,G,B, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        
+        //Triangle
+        glBegin(GL_TRIANGLES);
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glVertex3f(-0.5f, -0.5f, 0.0f);
+        glColor3f(0.0f, 1.0f, 0.0f);
+        glVertex3f(0.5f, -0.5f, 0.0f);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        glVertex3f(0.0f, 0.5f, 0.0f);
+        glEnd();  
+
 
         // start the Dear ImGui frame
         UI::DrawImGui(window);
+        // Render the SDL2 window to a texture
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        
+
         //ImGui::ShowStyleEditor();
         if(GET_WIDTH<1080)
         {
             show_launcher = false;
             show_launchermobile = true;
             
-            UI::LauncherMobile(&show_launchermobile);
+            UI::LauncherMobile(&show_launchermobile, textureID);
         }
         else
         {
             show_launcher = true;
             show_launchermobile = false;
 
-            UI::Launcher(&show_launcher);
+            UI::Launcher(&show_launcher, textureID);
         }
         
 
         if(headerui)
         { 
-            UI::HeaderMenu(window);
+            UI::HeaderMenu(window, &debugui);
+            //printf("%i\n",debugui);
         }
 
         if(debugui)
         {
-            UI::DebugMenu(&R, &G, &B, window);
+            UI::DebugMenu(&R, &G, &B, window, textureID);
         }
 
         ImGui::Render();

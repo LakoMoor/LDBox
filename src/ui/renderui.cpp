@@ -13,10 +13,25 @@ static bool show_app_about = false;
 static bool hide_privew = false;
 static bool show_app_debug = false;
 static bool show_app_launcher = false;
+const char* items[] = { "H1.5", "H2.0"};
+static bool show_app_widget = true;
+
 static float progress = 0.0f;
 const char* selectGame;
 
-void UI::LauncherMobile(bool* m_show)
+ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking |ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+void UI::Profile()
+{
+     show_app_widget = false;
+}
+
+void Library()
+{
+    show_app_widget = true;
+}
+
+void UI::LauncherMobile(bool* m_show,  GLuint textureID)
 {    
         bool open = true;
         
@@ -35,7 +50,7 @@ void UI::LauncherMobile(bool* m_show)
 
         ImGuiID dockspace_idMobile = ImGui::GetID("MainDockerMobile");
 
-        if (ImGui::DockBuilderGetNode(dockspace_idMobile) == NULL)
+       if (ImGui::DockBuilderGetNode(dockspace_idMobile) == NULL)
         {
             ImGui::DockBuilderRemoveNode(dockspace_idMobile); // Clear out existing layout
             ImGui::DockBuilderAddNode(dockspace_idMobile, ImGuiDockNodeFlags_NoTabBar| ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_HiddenTabBar); // Add empty node
@@ -46,10 +61,12 @@ void UI::LauncherMobile(bool* m_show)
             ImGuiID dock_id_n1 = ImGui::DockBuilderSplitNode(dock_main_idMobile, ImGuiDir_Down, 0.1f, NULL, &dock_main_idMobile);
             ImGuiID dock_id_n2 = ImGui::DockBuilderSplitNode(dock_main_idMobile, ImGuiDir_Down, 0.15f, NULL, &dock_main_idMobile);
             ImGuiID dock_id_n3 = ImGui::DockBuilderSplitNode(dock_main_idMobile, ImGuiDir_Down, 0.5f, NULL, &dock_main_idMobile);
+            ImGuiID dock_id_n5 = ImGui::DockBuilderSplitNode(dock_main_idMobile, ImGuiDir_Right, 0.5f, NULL, &dock_main_idMobile);
             
             ImGui::DockBuilderDockWindow("MainMenuMobile", dock_id_n1);
             ImGui::DockBuilderDockWindow("GameListMobile", dock_id_n2);
             ImGui::DockBuilderDockWindow("PreviewMobile", dock_id_n3);
+            ImGui::DockBuilderDockWindow("Profile", dock_id_n5);
             
             ImGui::DockBuilderFinish(dockspace_idMobile);
         }
@@ -77,17 +94,20 @@ void UI::LauncherMobile(bool* m_show)
             }
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
-            ImGui::Button("Store",ImVec2(-FLT_MIN, -FLT_MIN));
+            if(ImGui::Button("Store",ImVec2(-FLT_MIN, -FLT_MIN))) UI::Profile();
             ImGui::TableSetColumnIndex(1);
-            ImGui::Button("Library",ImVec2(-FLT_MIN, -FLT_MIN));
+            if(ImGui::Button("Library",ImVec2(-FLT_MIN, -FLT_MIN))) Library();
             ImGui::TableSetColumnIndex(2);
-            ImGui::Button("Profile",ImVec2(-FLT_MIN, -FLT_MIN));
+            if(ImGui::Button("Profile",ImVec2(-FLT_MIN, -FLT_MIN))) UI::Profile();
+
             
             ImGui::EndTable();
         }        
         ImGui::End();
         
-        ImGui::Begin("GameListMobile", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
+        if(show_app_widget)
+        {
+          ImGui::Begin("GameListMobile", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
         if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
         {
             dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
@@ -218,21 +238,35 @@ void UI::LauncherMobile(bool* m_show)
                 //ImGui::PopStyleVar();
             }       
             ImGui::End();
+        }  
+        }
+    if(!show_app_widget)
+        {
+            ImGui::Begin("Profile",  nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar);
+            if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+            {
+                dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar |  ImGuiDockNodeFlags_NoResize;
+            }
+            ImGui::SeparatorText("Profile");
+            {
+            ImVec2 window_size = ImGui::GetWindowSize();
+            ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(textureID)), window_size, ImVec2(0, 1), ImVec2(1, 0));
+            }
+            ImGui::End();
         }
 }
 
-void UI::Launcher(bool* m_show)
+void UI::Launcher(bool* m_show, GLuint textureID)
 {    
         bool open = true;
         
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
+       
         ImGuiViewport* viewport = ImGui::GetMainViewport();
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
         ImGui::SetNextWindowPos(true ? viewport->WorkPos : viewport->Pos);
         ImGui::SetNextWindowSize(true ? viewport->WorkSize : viewport->Size);
 
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus ;
+        
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         ImGui::Begin("Launcher", &open, window_flags);
@@ -252,12 +286,14 @@ void UI::Launcher(bool* m_show)
             ImGuiID dock_id_n4 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.1f, NULL, &dock_main_id);
             ImGuiID dock_id_n2 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.15f, NULL, &dock_main_id);
             ImGuiID dock_id_n3 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.5f, NULL, &dock_main_id);
+            ImGuiID dock_id_n5 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.5f, NULL, &dock_main_id);
             
             
             ImGui::DockBuilderDockWindow("MainMenu", dock_id_n1);
             ImGui::DockBuilderDockWindow("GameList", dock_id_n2);
             ImGui::DockBuilderDockWindow("Preview", dock_id_n3);
             ImGui::DockBuilderDockWindow("Status", dock_id_n4);
+            ImGui::DockBuilderDockWindow("Profile", dock_id_n5);
             ImGui::DockBuilderFinish(dockspace_id);
         }
    
@@ -285,20 +321,21 @@ void UI::Launcher(bool* m_show)
             }
             ImGui::TableNextRow();
             ImGui::TableSetColumnIndex(0);
-            ImGui::Button("Store",ImVec2(-FLT_MIN, -FLT_MIN));
+            if(ImGui::Button("Store",ImVec2(-FLT_MIN, -FLT_MIN))) UI::Profile();
             ImGui::TableSetColumnIndex(1);
-            ImGui::Button("Library",ImVec2(-FLT_MIN, -FLT_MIN));
+            if(ImGui::Button("Library",ImVec2(-FLT_MIN, -FLT_MIN))) Library();
             ImGui::TableSetColumnIndex(2);
-            ImGui::Button("Profile",ImVec2(-FLT_MIN, -FLT_MIN));
+            if(ImGui::Button("Profile",ImVec2(-FLT_MIN, -FLT_MIN))) UI::Profile();
             ImGui::TableSetColumnIndex(3);
-            if(ImGui::Button("Exit",ImVec2(-FLT_MIN, -FLT_MIN)))
-                exit(0);
+            if(ImGui::Button("Exit",ImVec2(-FLT_MIN, -FLT_MIN)))exit(0);
             
             ImGui::EndTable();
         }        
         ImGui::End();
         
-        ImGui::Begin("GameList", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+        if(show_app_widget)
+        {
+            ImGui::Begin("GameList", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
         if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
         {
             dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
@@ -428,20 +465,35 @@ void UI::Launcher(bool* m_show)
                 ImGui::PopStyleVar();
             }           
             ImGui::End();
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(10, 10));
+            ImGui::Begin("Status", nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar);
+            if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+            {
+                dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar |  ImGuiDockNodeFlags_NoResize;
+            }
+        ImGui::End();
         }
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(10, 10));
-        ImGui::Begin("Status", nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar);
-        if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+        }
+        if(!show_app_widget)
         {
-            dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar |  ImGuiDockNodeFlags_NoResize;
+            ImGui::Begin("Profile",  nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar);
+            if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+            {
+                dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar |  ImGuiDockNodeFlags_NoResize;
+            }
+            ImGui::SeparatorText("Profile");
+            {
+            ImVec2 window_size = ImGui::GetWindowSize();
+            ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(textureID)), window_size, ImVec2(0, 1), ImVec2(1, 0));
+            }
+            ImGui::End();
         }
-    ImGui::End();
 }
 
-void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window)
+
+
+void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID)
 {
-      
     if(ImGui::Begin("DebugMenu", NULL, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse))
         {   
             static float col[3] = {0.1f,0.1f,0.1f}; 
@@ -449,11 +501,14 @@ void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window)
             if(ImGui::Button("Hi!"))
             spdlog::info("Hello logger :)");
             ImGui::SeparatorText("Background Color");
-            if(ImGui::ColorEdit3("Background", col))
-                std::cout << _R << _G << _B <<std::endl;
             ImGui::SliderFloat("R",_R,0.0f, 1.0f);
             ImGui::SliderFloat("G",_G,0.0f, 1.0f);
             ImGui::SliderFloat("B",_B,0.0f, 1.0f);
+            ImGui::SeparatorText("OpenGL");
+            {
+            ImVec2 window_size = ImGui::GetWindowSize();
+            ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(textureID)), ImVec2(256,128), ImVec2(0, 1), ImVec2(1, 0));
+            }
             ImGui::SeparatorText("Mobile mode");
             if(ImGui::Button("Mobile"))
             {
@@ -498,9 +553,8 @@ void UI::About(bool* m_show)
         ImGui::End();   
 }
 
-void UI::HeaderMenu(SDL_Window* window)
+void UI::HeaderMenu(SDL_Window* window, bool* debug)
 {  
-       
     if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -517,9 +571,10 @@ void UI::HeaderMenu(SDL_Window* window)
 		}
         if (ImGui::BeginMenu("Tools"))
 		{
-            if (ImGui::MenuItem("Style editor"))
+            if (ImGui::MenuItem("Debug menu"))
             {            
-                spdlog::warn("Empty item");
+                *debug = !*debug;
+                printf("%i\n",debug);
             }
             ImGui::EndMenu();
         }            
@@ -556,9 +611,12 @@ void UI::InitImGui(SDL_Window* window, SDL_GLContext glContext)
     ImGuiIO& io = ImGui::GetIO();
     io.IniFilename = NULL;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable keyboard controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable docking
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;    // Enable docking
     io.ConfigViewportsNoDecoration = false;
+    
+    #ifdef WIN32
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;    // Enable multi-viewports
+    #endif
     ImVec4* colors = ImGui::GetStyle().Colors;
 
 
@@ -572,6 +630,7 @@ void UI::DrawImGui(SDL_Window* window)
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
     ImGui::NewFrame();
+    ImGui::SetShortcutRouting(ImGuiMod_Ctrl | ImGuiKey_Tab, ImGuiKeyOwner_None);
     
 }
 
