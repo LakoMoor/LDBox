@@ -16,6 +16,7 @@
 
 // Other headers
 #include <iostream>
+#include <fstream>
 
 
 int main(int argc, char* argv[])
@@ -58,6 +59,73 @@ int main(int argc, char* argv[])
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    //login checker
+    #ifdef __linux__
+
+        std::ifstream account;
+        account.open("acc.psi");
+
+        if(account)
+        {
+            show_login = false;
+            std::string title = "None";
+            std::string usr;
+            if(account.is_open())
+            {  
+                account >> usr;       
+            }
+            account.close();
+            spdlog::info(usr);
+            SDL_SetWindowResizable(window, SDL_TRUE);
+            SDL_SetWindowSize(window, 1280, 720); 
+        }
+        else
+        {
+            show_launcher = false;
+            show_launchermobile = false;
+            show_login = true;
+            SDL_SetWindowResizable(window, SDL_FALSE);
+            SDL_SetWindowSize(window, 250, 100); 
+
+        }
+
+    #elif _WIN32
+
+        std::ifstream account;
+        account.open("acc.psi");
+
+        if(account)
+        {
+            show_login = false;
+            std::string title = "None";
+            std::string usr;
+            if(account.is_open())
+            {  
+                account >> usr;       
+            }
+            account.close();
+            spdlog::info(usr);
+            SDL_SetWindowResizable(window, SDL_TRUE);
+            SDL_SetWindowSize(window, 1280, 720); 
+        }
+        else
+        {
+            show_launcher = false;
+            show_launchermobile = false;
+            show_login = true;
+            SDL_SetWindowResizable(window, SDL_FALSE);
+            SDL_SetWindowSize(window, 250, 100); 
+
+        }
+
+    #elif __ANDROID__
+        std::ofstream accountCreate("acc.psi");
+        accountCreate << "AndroidUsr";
+        accountCreate.close();
+
+
+    #endif
 
     // Wait for user to close the window
     bool quit = false;
@@ -105,39 +173,52 @@ int main(int argc, char* argv[])
         glClearColor(R,G,B, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
+        
+
         //Triangle
-        glBegin(GL_TRIANGLES);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex3f(-0.5f, -0.5f, 0.0f);
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex3f(0.5f, -0.5f, 0.0f);
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex3f(0.0f, 0.5f, 0.0f);
-        glEnd();  
+        if(!true)
+        {
+            glBegin(GL_TRIANGLES);
+            glColor3f(1.0f, 0.0f, 0.0f);
+            glVertex3f(-0.5f, -0.5f, 0.0f);
+            glColor3f(0.0f, 1.0f, 0.0f);
+            glVertex3f(0.5f, -0.5f, 0.0f);
+            glColor3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(0.0f, 0.5f, 0.0f);
+            glEnd();  
+        }
 
 
         // start the Dear ImGui frame
         UI::DrawImGui(window);
+
+        if(show_login)
+            UI::LogIn();
+        else
+        {
+            if(GET_WIDTH<1080)
+            {
+                show_launcher = false;
+                show_launchermobile = true;
+                    
+                UI::LauncherMobile(&show_launchermobile, textureID);
+            }
+            else
+            {
+                show_launcher = true;
+                show_launchermobile = false;
+
+                UI::Launcher(&show_launcher, textureID);
+            }
+        }
+        
+
         // Render the SDL2 window to a texture
         glBindTexture(GL_TEXTURE_2D, textureID);
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         
 
         //ImGui::ShowStyleEditor();
-        if(GET_WIDTH<1080)
-        {
-            show_launcher = false;
-            show_launchermobile = true;
-            
-            UI::LauncherMobile(&show_launchermobile, textureID);
-        }
-        else
-        {
-            show_launcher = true;
-            show_launchermobile = false;
-
-            UI::Launcher(&show_launcher, textureID);
-        }
         
 
         if(headerui)
