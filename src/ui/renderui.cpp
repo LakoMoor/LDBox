@@ -40,6 +40,7 @@ void UI::LauncherMobile(bool* m_show,  GLuint textureID)
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
         ImGui::SetNextWindowPos(true ? viewport->WorkPos : viewport->Pos);
         ImGui::SetNextWindowSize(true ? viewport->WorkSize : viewport->Size);
+        ImGui::PopStyleVar();
 
         window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus ;
@@ -78,6 +79,7 @@ void UI::LauncherMobile(bool* m_show,  GLuint textureID)
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(60, 70));
         ImGui::Begin("MainMenuMobile", nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar);
+        ImGui::PopStyleVar();
         if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
         {
             dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar |  ImGuiDockNodeFlags_NoResize;
@@ -217,7 +219,6 @@ void UI::LauncherMobile(bool* m_show,  GLuint textureID)
                 }
                 
                 ImGui::EndChild();
-                //ImGui::PopStyleVar();
             }
             {
                 ImGui::BeginChild("ChildR1Mobile", ImVec2(-FLT_MIN, 260), true, window_flags);
@@ -235,7 +236,6 @@ void UI::LauncherMobile(bool* m_show,  GLuint textureID)
                 }
                 
                 ImGui::EndChild();
-                //ImGui::PopStyleVar();
             }       
             ImGui::End();
         }  
@@ -265,7 +265,7 @@ void UI::Launcher(bool* m_show, GLuint textureID)
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
         ImGui::SetNextWindowPos(true ? viewport->WorkPos : viewport->Pos);
         ImGui::SetNextWindowSize(true ? viewport->WorkSize : viewport->Size);
-
+        ImGui::PopStyleVar();
         
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -304,6 +304,7 @@ void UI::Launcher(bool* m_show, GLuint textureID)
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(60, 70));
         ImGui::Begin("MainMenu", nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar);
+        ImGui::PopStyleVar();
         if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
         {
             dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar |  ImGuiDockNodeFlags_NoResize;
@@ -443,7 +444,6 @@ void UI::Launcher(bool* m_show, GLuint textureID)
                 }
                 
                 ImGui::EndChild();
-                ImGui::PopStyleVar();
             }
             ImGui::SameLine();
             {
@@ -460,13 +460,12 @@ void UI::Launcher(bool* m_show, GLuint textureID)
                     ImGui::Button("Install",ImVec2(125.0f, 45.0f));
                     ImGui::EndTable();
                 }
-                
                 ImGui::EndChild();
-                ImGui::PopStyleVar();
             }           
             ImGui::End();
             ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(10, 10));
             ImGui::Begin("Status", nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar);
+            ImGui::PopStyleVar();
             if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
             {
                 dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar |  ImGuiDockNodeFlags_NoResize;
