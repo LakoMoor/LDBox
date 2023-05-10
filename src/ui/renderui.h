@@ -16,6 +16,7 @@ public:
     static void HeaderMenu(SDL_Window* window, bool* debug);
 
     //Launcher
+    static void LogIn();
     static void Launcher(bool* m_show, GLuint textureID);
     static void Profile();
     static void LauncherMobile(bool* m_show,  GLuint textureID);

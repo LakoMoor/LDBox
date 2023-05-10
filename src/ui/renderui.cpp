@@ -31,6 +31,57 @@ void Library()
     show_app_widget = true;
 }
 
+void UI::LogIn()
+{
+    static ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse;
+   
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(true ? viewport->WorkPos : viewport->Pos);
+    ImGui::SetNextWindowSize(true ? viewport->WorkSize : viewport->Size);
+    //ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0,0,0,0));
+    if(ImGui::Begin("Launcher", nullptr, flags))
+    {  
+        static bool button_disable = true;
+        static char str1[128] = "";
+        ImGui::InputTextWithHint(" ", "enter text here", str1, IM_ARRAYSIZE(str1));
+        std::string usrname = str1;
+        if(usrname == "")
+        {
+            button_disable = true;
+        }
+        else
+        {
+            button_disable = false;
+        }
+
+        ImGui::BeginDisabled(button_disable);
+        if(ImGui::Button("Apply"))
+        {           
+            ImGui::OpenPopup("Save");
+        }
+        ImGui::EndDisabled();
+
+        if (ImGui::BeginPopupModal("Save", NULL, flags))
+            {
+            ImGui::Text("Restart LDBox");
+            ImGui::Separator();
+
+            if (ImGui::Button("OK", ImVec2(120, 0))) 
+            { 
+                spdlog::info(str1);
+                std::ofstream accountCreate("acc.psi");
+                accountCreate << str1;
+                accountCreate.close();
+                ImGui::CloseCurrentPopup(); 
+                exit(0);
+            }
+            ImGui::SetItemDefaultFocus();
+            ImGui::EndPopup();
+        }
+        ImGui::End();
+    }
+}
+
 void UI::LauncherMobile(bool* m_show,  GLuint textureID)
 {    
         bool open = true;
@@ -562,8 +613,9 @@ void UI::HeaderMenu(SDL_Window* window, bool* debug)
             {
                 spdlog::warn("Empty item");
             }
-            if(ImGui::MenuItem("Exit", NULL))
+            if(ImGui::MenuItem("Logout", NULL))
             {
+                std::remove("acc.psi");
                 exit(0);
             }
 			ImGui::EndMenu();
@@ -573,7 +625,6 @@ void UI::HeaderMenu(SDL_Window* window, bool* debug)
             if (ImGui::MenuItem("Debug menu"))
             {            
                 *debug = !*debug;
-                printf("%i\n",debug);
             }
             ImGui::EndMenu();
         }            
