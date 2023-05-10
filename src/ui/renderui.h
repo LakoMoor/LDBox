@@ -22,7 +22,7 @@ public:
     static void LauncherMobile(bool* m_show,  GLuint textureID);
 
     //Windows
-    static void DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID);
+    static void DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID, bool* triangle);
     static void About(bool* m_show);
     static void Settings(bool* m_show);
     static void Main();

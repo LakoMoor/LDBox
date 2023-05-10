@@ -542,7 +542,7 @@ void UI::Launcher(bool* m_show, GLuint textureID)
 
 
 
-void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID)
+void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID, bool* triangle)
 {
     if(ImGui::Begin("DebugMenu", NULL, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse))
         {   
@@ -556,8 +556,9 @@ void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint t
             ImGui::SliderFloat("B",_B,0.0f, 1.0f);
             ImGui::SeparatorText("OpenGL");
             {
-            ImVec2 window_size = ImGui::GetWindowSize();
-            ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(textureID)), ImVec2(256,128), ImVec2(0, 1), ImVec2(1, 0));
+                ImGui::Checkbox("Show/Hide Triangle", triangle);
+                ImVec2 window_size = ImGui::GetWindowSize();
+                ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(textureID)), ImVec2(256,128), ImVec2(0, 1), ImVec2(1, 0));
             }
             ImGui::SeparatorText("Mobile mode");
             if(ImGui::Button("Mobile"))
