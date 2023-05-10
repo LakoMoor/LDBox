@@ -176,7 +176,8 @@ int main(int argc, char* argv[])
         
 
         //Triangle
-        if(!true)
+        static bool tringle = false;
+        if(tringle)
         {
             glBegin(GL_TRIANGLES);
             glColor3f(1.0f, 0.0f, 0.0f);
@@ -229,7 +230,7 @@ int main(int argc, char* argv[])
 
         if(debugui)
         {
-            UI::DebugMenu(&R, &G, &B, window, textureID);
+            UI::DebugMenu(&R, &G, &B, window, textureID, &tringle);
         }
 
         ImGui::Render();
