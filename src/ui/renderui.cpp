@@ -14,6 +14,7 @@ static bool hide_privew = false;
 static bool show_app_debug = false;
 static bool show_app_launcher = false;
 const char* items[] = { "H1.5", "H2.0"};
+const char* language[] = { "English"};
 static bool show_app_widget = true;
 
 static float progress = 0.0f;
@@ -45,13 +46,26 @@ void UI::LogIn()
         static char str1[128] = "";
         ImGui::InputTextWithHint(" ", "enter text here", str1, IM_ARRAYSIZE(str1));
         std::string usrname = str1;
-        if(usrname == "")
+        
+        if(usrname == "") button_disable = true;
+        else button_disable = false;
+        static const char* current_item = language[0];
+        if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
         {
-            button_disable = true;
-        }
-        else
-        {
-            button_disable = false;
+            for (int n = 0; n < IM_ARRAYSIZE(language); n++)
+            {
+                bool is_selected = (current_item == language[n]); // You can store your selection however you want, outside or inside your objects
+                if(ImGui::Selectable(language[n], is_selected))
+                {
+                        current_item = language[n];
+                }
+                if (is_selected)
+                {
+                     ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+                }
+                   
+            }
+            ImGui::EndCombo();
         }
 
         ImGui::BeginDisabled(button_disable);
@@ -540,7 +554,25 @@ void UI::Launcher(bool* m_show, GLuint textureID)
         }
 }
 
-
+void UI::Console()
+{
+    ImGui::Begin("Console",nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize);
+    static char str[128] = "";
+    static char log[128] = "";
+    ImGui::InputTextMultiline("##source", log, IM_ARRAYSIZE(log), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_ReadOnly);
+    ImGui::InputTextWithHint(" ", "command (use 'help' for show commands)", str, IM_ARRAYSIZE(str));
+    ImGui::SameLine();
+    if(ImGui::Button("Send") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
+    {
+        std::string cmnd = str;
+        if(cmnd == "debug")
+        {
+            spdlog::debug("Debug entry");
+        }
+        str[0] = '\0';
+    }
+    ImGui::End();
+}
 
 void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID, bool* triangle)
 {
@@ -664,7 +696,6 @@ void UI::InitImGui(SDL_Window* window, SDL_GLContext glContext)
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable keyboard controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;    // Enable docking
     io.ConfigViewportsNoDecoration = false;
-    
     #ifdef WIN32
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;    // Enable multi-viewports
     #endif

@@ -26,6 +26,7 @@ public:
     static void About(bool* m_show);
     static void Settings(bool* m_show);
     static void Main();
+    static void Console();
 
     //Render
     static void InitImGui(SDL_Window* window, SDL_GLContext glContext);

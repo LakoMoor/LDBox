@@ -154,6 +154,10 @@ int main(int argc, char* argv[])
                     spdlog::debug("Header open case");
                     headerui = !headerui;
                     continue;
+                case SDLK_BACKQUOTE:
+                    spdlog::debug("Debug console open case");
+                    consoleui = !consoleui;
+                    continue;
                 case SDLK_F5:
                     spdlog::debug("Debug menu open case");
                     debugui = !debugui;
@@ -220,7 +224,10 @@ int main(int argc, char* argv[])
         
 
         //ImGui::ShowStyleEditor();
-        
+        if(consoleui)
+        {
+            UI::Console();
+        }
 
         if(headerui)
         { 
