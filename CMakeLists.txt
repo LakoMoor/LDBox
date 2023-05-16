@@ -79,7 +79,6 @@ target_link_libraries(
         SDL2 
         spdlog
         glad 
-        curl
         cpr
         nlohmann_json
 #        glm
