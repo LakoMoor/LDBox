@@ -12,6 +12,7 @@ The project was originally conceived to create a [Steam](https://store.steampowe
 - Used OpenGL
 - Based SDL2
 - Dear ImGui based
+- CRP (cURL)
 
 
 # Current tasks:
@@ -19,7 +20,6 @@ The project was originally conceived to create a [Steam](https://store.steampowe
 - Converted into a library
 - Make like Game Engine
 - Find people :D
-- Add cURL and boost
 - Build for iOS and Android
 
 # Getting started
@@ -32,6 +32,8 @@ A Work-In-Progress.
 # Used libraries
 * [LDBox](https://github.com/lakomoor/LDBox)
   * [SDL2](https://libsdl.org/)
+  * [cURL](https://curl.se/)
+  * [CRP](https://docs.libcpr.org/)
   * [spdlog](https://github.com/gabime/spdlog)
   * [GLAD](https://glad.dav1d.de/)
   * [GLM](https://github.com/g-truc/glm)
