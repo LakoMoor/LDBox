@@ -5,6 +5,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <glad/glad.h>
+
 #define URL_API "https://api.github.com/repos/LakoMoor/LDBox"
 #define URL "https://github.com/LakoMoor/LDBox"
 
@@ -22,7 +23,7 @@ public:
     static void LauncherMobile(bool* m_show,  GLuint textureID);
 
     //Windows
-    static void DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID, bool* triangle);
+    static void DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID, bool* triangle, bool show_mobile, bool show_pc);
     static void About(bool* m_show);
     static void Settings(bool* m_show);
     static void Main();
