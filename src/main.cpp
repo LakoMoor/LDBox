@@ -201,6 +201,7 @@ int main(int argc, char* argv[])
             UI::LogIn();
         else
         {
+            #ifdef ANDROID
             if(GET_WIDTH<1080)
             {
                 show_launcher = false;
@@ -208,7 +209,7 @@ int main(int argc, char* argv[])
                     
                 UI::LauncherMobile(&show_launchermobile, textureID);
             }
-            else
+            #endif
             {
                 show_launcher = true;
                 show_launchermobile = false;
@@ -237,7 +238,7 @@ int main(int argc, char* argv[])
 
         if(debugui)
         {
-            UI::DebugMenu(&R, &G, &B, window, textureID, &tringle);
+            UI::DebugMenu(&R, &G, &B, window, textureID, &tringle, show_launchermobile, show_launcher);
         }
 
         ImGui::Render();
