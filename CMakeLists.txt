@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.1)
-project(LDBox VERSION 0.2.9)
+project(LDBox VERSION 0.3.1)
 
 option(BUILD_SHARED_LIBS "Build Shared Libraries" ON) 
 
@@ -31,6 +31,29 @@ add_subdirectory(vendor/glad/)
 link_directories(vendor/glad)
 include_directories(vendor/glad/include)
 
+#cpr
+add_subdirectory(vendor/cpr/)
+link_directories(vendor/cpr)
+include_directories(vendor/cpr/include)
+
+#json
+add_subdirectory(vendor/json/)
+link_directories(vendor/json)
+include_directories(vendor/json/include)
+
+#curl
+#set(HTTP_ONLY ON)
+#set(CMAKE_USE_OPENSSL OFF)
+#set(BUILD_CURL_EXE OFF)
+#set(CURL_STATICLIB ON)
+#set(CURL_ZLIB OFF)
+#set(CMAKE_USE_LIBSSH2 OFF)
+#add_subdirectory(vendor/curl/)
+#link_directories(vendor/curl)
+#include_directories(vendor/curl/include)
+
+
+
 #glm
 #add_subdirectory(vendor/glm)
 #link_directories(vendor/glm)
@@ -56,6 +79,9 @@ target_link_libraries(
         SDL2 
         spdlog
         glad 
+        curl
+        cpr
+        nlohmann_json
 #        glm
         )
 add_test(
