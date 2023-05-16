@@ -1,4 +1,4 @@
-#define PROJECT_VER "0.2.9"
+#define PROJECT_VER "0.3.1"
 
 #include "renderui.h"
 #include "../core/render.h"
@@ -6,6 +6,10 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+
+#include <cpr/cpr.h>
+
+#include <nlohmann/json.hpp>
 
 #include <spdlog/spdlog.h>
 
@@ -69,7 +73,7 @@ void UI::LogIn()
         }
 
         ImGui::BeginDisabled(button_disable);
-        if(ImGui::Button("Apply"))
+        if(ImGui::Button("Apply",ImVec2(-FLT_MIN, -FLT_MIN)))
         {           
             ImGui::OpenPopup("Save");
         }
@@ -80,7 +84,7 @@ void UI::LogIn()
             ImGui::Text("Restart LDBox");
             ImGui::Separator();
 
-            if (ImGui::Button("OK", ImVec2(120, 0))) 
+            if (ImGui::Button("OK", ImVec2(-FLT_MIN, -FLT_MIN))) 
             { 
                 spdlog::info(str1);
                 std::ofstream accountCreate("acc.psi");
@@ -558,8 +562,6 @@ void UI::Console()
 {
     ImGui::Begin("Console",nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize);
     static char str[128] = "";
-    static char log[128] = "";
-    ImGui::InputTextMultiline("##source", log, IM_ARRAYSIZE(log), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_ReadOnly);
     ImGui::InputTextWithHint(" ", "command (use 'help' for show commands)", str, IM_ARRAYSIZE(str));
     ImGui::SameLine();
     if(ImGui::Button("Send") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
@@ -569,12 +571,37 @@ void UI::Console()
         {
             spdlog::debug("Debug entry");
         }
+        if(cmnd == "help")
+        {
+            spdlog::debug("help entry");
+        }
+        if(cmnd == "join")
+        {   
+            
+            using json = nlohmann::json;
+            json j;
+            j["user"] = "Habrahabr";
+            cpr::Response r = cpr::Post(cpr::Url{"http://127.0.0.1:8080/api/v1/online"}, 
+            cpr::Body{j.dump()},
+            cpr::Header{ { "Content-Type", "application/json" } });
+            std::cout << r.text << std::endl;
+        }
+        if(cmnd == "ping")
+        {
+            cpr::Response response = cpr::Get(cpr::Url{URL_API});
+            std::string json = response.text;
+            std::cout<<json;
+            std::ofstream jsapi("jsapi.json");
+            jsapi<<json;
+            jsapi.close();
+            //spdlog::debug(jsapi);
+        }
         str[0] = '\0';
     }
     ImGui::End();
 }
 
-void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID, bool* triangle)
+void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID, bool* triangle, bool show_mobile, bool show_pc)
 {
     if(ImGui::Begin("DebugMenu", NULL, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse))
         {   
@@ -596,12 +623,16 @@ void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint t
             if(ImGui::Button("Mobile"))
             {
                 spdlog::warn("Mobile");
+                show_mobile = true;
+                show_pc = false;
                 SDL_SetWindowSize(window, 360, 640);
             }
             ImGui::SameLine();
             if(ImGui::Button("PC"))
             {
                 spdlog::warn("PC");
+                show_mobile = false;
+                show_pc = true;
                 SDL_SetWindowSize(window, 1280, 720);
             }
             ImGui::End(); 
