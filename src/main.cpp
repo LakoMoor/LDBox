@@ -21,7 +21,17 @@
 
 int main(int argc, char* argv[])
 {
-    if(argc==2 && !strcmp(argv[1], "-dev"))
+    if(argc==2 && !strcmp(argv[1], "--editor"))
+    {
+        editorui = !editorui;
+        spdlog::debug("EDITOR MODE");
+    }
+    if(argc==2 && !strcmp(argv[1], "--debug"))
+    {
+        debugui = !debugui;
+        spdlog::debug("DEV MODE");
+    }
+    if(argc==2 && !strcmp(argv[1], "--dev"))
     {
         debugui = !debugui;
         spdlog::debug("DEV MODE");
@@ -110,14 +120,18 @@ int main(int argc, char* argv[])
         UI::DrawImGui(window);
 
         // start the Dear ImGui frame
-        UI::Launcher(&show_launcher, window, textureID);
+        if(editorui)
+        {
+            UI::Launcher(&show_launcher, window, textureID);
+            UI::HeaderMenu(window, &debugui);
+        }
         
         //ImGui::ShowStyleEditor();
         if(consoleui)
         {
             UI::Console();
         }
-        UI::HeaderMenu(window, &debugui);
+        
 
         
         ImGui::Render();

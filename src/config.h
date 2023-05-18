@@ -2,6 +2,7 @@ static bool show_launcher;
 static bool show_launchermobile;
 static bool show_login;
 bool headerui = false;
+bool editorui = false;
 bool consoleui = false;
 bool debugui = false;
 static float R = 0.2f;
