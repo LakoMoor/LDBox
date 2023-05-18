@@ -60,72 +60,6 @@ int main(int argc, char* argv[])
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    //login checker
-    #ifdef __linux__
-
-        std::ifstream account;
-        account.open("acc.psi");
-
-        if(account)
-        {
-            show_login = false;
-            std::string title = "None";
-            std::string usr;
-            if(account.is_open())
-            {  
-                account >> usr;       
-            }
-            account.close();
-            spdlog::info(usr);
-            SDL_SetWindowResizable(window, SDL_TRUE);
-            SDL_SetWindowSize(window, 1280, 720); 
-        }
-        else
-        {
-            show_launcher = false;
-            show_launchermobile = false;
-            show_login = true;
-            SDL_SetWindowResizable(window, SDL_FALSE);
-            SDL_SetWindowSize(window, 250, 100); 
-
-        }
-
-    #elif _WIN32
-
-        std::ifstream account;
-        account.open("acc.psi");
-
-        if(account)
-        {
-            show_login = false;
-            std::string title = "None";
-            std::string usr;
-            if(account.is_open())
-            {  
-                account >> usr;       
-            }
-            account.close();
-            spdlog::info(usr);
-            SDL_SetWindowResizable(window, SDL_TRUE);
-            SDL_SetWindowSize(window, 1280, 720); 
-        }
-        else
-        {
-            show_launcher = false;
-            show_launchermobile = false;
-            show_login = true;
-            SDL_SetWindowResizable(window, SDL_FALSE);
-            SDL_SetWindowSize(window, 250, 100); 
-
-        }
-
-    #elif __ANDROID__
-        std::ofstream accountCreate("acc.psi");
-        accountCreate << "AndroidUsr";
-        accountCreate.close();
-
-
-    #endif
 
     // Wait for user to close the window
     bool quit = false;
@@ -150,17 +84,9 @@ int main(int argc, char* argv[])
             case SDL_KEYDOWN:
                 switch (event.key.keysym.sym)
                 {
-                case SDLK_F1:
-                    spdlog::debug("Header open case");
-                    headerui = !headerui;
-                    continue;
                 case SDLK_BACKQUOTE:
                     spdlog::debug("Debug console open case");
                     consoleui = !consoleui;
-                    continue;
-                case SDLK_F5:
-                    spdlog::debug("Debug menu open case");
-                    debugui = !debugui;
                     continue;
                 case SDLK_F11:
                     spdlog::debug("Fullscreen case");
@@ -177,70 +103,23 @@ int main(int argc, char* argv[])
         glClearColor(R,G,B, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
-        
-
-        //Triangle
-        static bool tringle = false;
-        if(tringle)
-        {
-            glBegin(GL_TRIANGLES);
-            glColor3f(1.0f, 0.0f, 0.0f);
-            glVertex3f(-0.5f, -0.5f, 0.0f);
-            glColor3f(0.0f, 1.0f, 0.0f);
-            glVertex3f(0.5f, -0.5f, 0.0f);
-            glColor3f(0.0f, 0.0f, 1.0f);
-            glVertex3f(0.0f, 0.5f, 0.0f);
-            glEnd();  
-        }
-
-
-        // start the Dear ImGui frame
-        UI::DrawImGui(window);
-
-        if(show_login)
-            UI::LogIn();
-        else
-        {
-            #ifdef ANDROID
-            if(GET_WIDTH<1080)
-            {
-                show_launcher = false;
-                show_launchermobile = true;
-                    
-                UI::LauncherMobile(&show_launchermobile, textureID);
-            }
-            #endif
-            {
-                show_launcher = true;
-                show_launchermobile = false;
-
-                UI::Launcher(&show_launcher, textureID);
-            }
-        }
-        
-
-        // Render the SDL2 window to a texture
+         // Render the SDL2 window to a texture
         glBindTexture(GL_TEXTURE_2D, textureID);
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-        
 
+        UI::DrawImGui(window);
+
+        // start the Dear ImGui frame
+        UI::Launcher(&show_launcher, window, textureID);
+        
         //ImGui::ShowStyleEditor();
         if(consoleui)
         {
             UI::Console();
         }
+        UI::HeaderMenu(window, &debugui);
 
-        if(headerui)
-        { 
-            UI::HeaderMenu(window, &debugui);
-            //printf("%i\n",debugui);
-        }
-
-        if(debugui)
-        {
-            UI::DebugMenu(&R, &G, &B, window, textureID, &tringle, show_launchermobile, show_launcher);
-        }
-
+        
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(window);

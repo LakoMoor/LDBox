@@ -17,15 +17,12 @@ public:
     static void HeaderMenu(SDL_Window* window, bool* debug);
 
     //Launcher
-    static void LogIn();
-    static void Launcher(bool* m_show, GLuint textureID);
+    static void Launcher(bool* m_show, SDL_Window* window, GLuint textureID);
     static void Profile();
-    static void LauncherMobile(bool* m_show,  GLuint textureID);
 
     //Windows
     static void DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID, bool* triangle, bool show_mobile, bool show_pc);
     static void About(bool* m_show);
-    static void Settings(bool* m_show);
     static void Main();
     static void Console();
 
@@ -34,22 +31,6 @@ public:
     static void DrawImGui(SDL_Window* window);
     static void DestroyImGui();
 
-    //tools
-    static void openurl(const char* path)
-    {
-        #ifdef _WIN322
-            ::ShellExecuteA(NULL, "open", path, NULL, NULL, SW_SHOWDEFAULT);
-        #else
-        #if __APPLE__
-            const char* open_executable = "open";
-        #else
-            const char* open_executable = "xdg-open";
-        #endif
-            char command[256];
-            snprintf(command, 256, "%s \"%s\"", open_executable, path);
-            system(command);
-        #endif
-    }
 private:
     int test;
 };

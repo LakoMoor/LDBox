@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.1)
-project(LDBox VERSION 0.3.1)
+project(LDBox VERSION 0.1.0)
 
 option(BUILD_SHARED_LIBS "Build Shared Libraries" ON) 
 
