@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
         // start the Dear ImGui frame
         if(editorui)
         {
-            UI::Launcher(&show_launcher, window, textureID);
+            UI::Editor(&show_launcher, window, textureID);
             UI::HeaderMenu(window, &debugui);
         }
         

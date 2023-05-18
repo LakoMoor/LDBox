@@ -17,13 +17,10 @@ public:
     static void HeaderMenu(SDL_Window* window, bool* debug);
 
     //Launcher
-    static void Launcher(bool* m_show, SDL_Window* window, GLuint textureID);
-    static void Profile();
+    static void Editor(bool* m_show, SDL_Window* window, GLuint textureID);
 
     //Windows
-    static void DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID, bool* triangle, bool show_mobile, bool show_pc);
     static void About(bool* m_show);
-    static void Main();
     static void Console();
 
     //Render

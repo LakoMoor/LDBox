@@ -7,261 +7,230 @@
 #include <iostream>
 #include <fstream>
 
-#include <cpr/cpr.h>
+// #include <cpr/cpr.h>
 
 #include <nlohmann/json.hpp>
 
 #include <spdlog/spdlog.h>
 
 static bool show_app_about = false;
-static bool hide_privew = false;
-static bool show_app_debug = false;
-static bool show_app_launcher = false;
-const char* items[] = { "H1.5", "H2.0"};
-const char* language[] = { "English"};
-static bool show_app_widget = true;
 
-static float progress = 0.0f;
-const char* selectGame;
-
-ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking |ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
+ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
 ImGuiWindowFlags CenterFlags = ImGuiWindowFlags_NoScrollbar;
 
-void UI::Launcher(bool* m_show, SDL_Window* window, GLuint textureID)
-{    
-        bool open = true;
-        
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
-        ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImGui::SetNextWindowPos(true ? viewport->WorkPos : viewport->Pos);
-        ImGui::SetNextWindowSize(true ? viewport->WorkSize : viewport->Size);
+void MainMenuButtons()
+{
+    using namespace ImGui;
+    Button("Open");
+    SameLine();
+    Button("Save");
+    SameLine();
+    Button("Play");
+    SameLine();
+    Button("Help");
+    SameLine();
+}
 
-        window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-        window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus ;
+void UI::Editor(bool *m_show, SDL_Window *window, GLuint textureID)
+{
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDocking;
+    ImGuiViewport *viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(true ? viewport->WorkPos : viewport->Pos);
+    ImGui::SetNextWindowSize(true ? viewport->WorkSize : viewport->Size);
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("Launcher", &open, window_flags);
-        ImGui::PopStyleVar();
+    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-        ImGuiID dockspace_id = ImGui::GetID("my_dockspace");
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::Begin("Editor", m_show, window_flags);
+    ImGui::PopStyleVar();
 
-        if (ImGui::DockBuilderGetNode(dockspace_id) == NULL)
-        {
-            ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
-            ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_NoTabBar| ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_HiddenTabBar); // Add empty node
-            ImGui::DockBuilderSetNodeSize(dockspace_id, ImVec2(1280, 720));
+    ImGuiID dockspace_id = ImGui::GetID("editor");
 
-            ImGuiID dock_main_id = dockspace_id;
+    if (ImGui::DockBuilderGetNode(dockspace_id) == NULL)
+    {
+        ImGui::DockBuilderRemoveNode(dockspace_id);                                                                                           // Clear out existing layout
+        ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoResize | ImGuiDockNodeFlags_HiddenTabBar); // Add empty node
+        ImGui::DockBuilderSetNodeSize(dockspace_id, ImVec2(1280, 720));
 
-            ImGuiID dock_id_n1 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.05f, NULL, &dock_main_id);
-            ImGuiID dock_id_n4 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.1f, NULL, &dock_main_id);
-            ImGuiID dock_id_n2 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.1f, NULL, &dock_main_id);
-            ImGuiID dock_id_n3 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.1f, NULL, &dock_main_id);
-            ImGuiID dock_id_n5 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.1f, NULL, &dock_main_id);
-            
-            ImGui::DockBuilderDockWindow("MainMenu", dock_id_n1);
-            ImGui::DockBuilderDockWindow("LeftUI", dock_id_n2);
-            ImGui::DockBuilderDockWindow("RightUI", dock_id_n3);
-            ImGui::DockBuilderDockWindow("CenterUI", dock_id_n5);
-            ImGui::DockBuilderDockWindow("DownUI", dock_id_n4);
-            ImGui::DockBuilderFinish(dockspace_id);
-        }
-   
-        ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
-        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f));
-        ImGui::PopStyleColor();
-        ImGui::End();
+        ImGuiID dock_main_id = dockspace_id;
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(60, 70));
+        ImGuiID dock_id_n1 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.05f, NULL, &dock_main_id);
+        ImGuiID dock_id_n4 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.25f, NULL, &dock_main_id);
+        ImGuiID dock_id_n2 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.2f, NULL, &dock_main_id);
+        ImGuiID dock_id_n3 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.2f, NULL, &dock_main_id);
+        ImGuiID dock_id_n5 = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.0f, NULL, &dock_main_id);
 
-        ImGui::Begin("MainMenu", nullptr, ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoScrollbar);
-        ImGui::PopStyleVar();
-        if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
-        {
-            dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar |  ImGuiDockNodeFlags_NoResize;
-        }
-        ImGui::End();
-        
-    
-        ImGui::Begin("LeftUI", nullptr, ImGuiWindowFlags_NoResize);
-        if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
-        {
-            dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
-        }
-        ImGui::Text("");
-        ImGui::End();
+        ImGui::DockBuilderDockWindow("MainMenu", dock_id_n1);
+        ImGui::DockBuilderDockWindow("LeftUI", dock_id_n2);
+        ImGui::DockBuilderDockWindow("RightUI", dock_id_n3);
+        ImGui::DockBuilderDockWindow("CenterUI", dock_id_n5);
+        ImGui::DockBuilderDockWindow("DownUI", dock_id_n4);
+        ImGui::DockBuilderFinish(dockspace_id);
+    }
 
-        ImGui::Begin("RightUI", nullptr, ImGuiWindowFlags_NoResize);
-        if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
-        {
-            dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
-        }
-        ImGui::Text("");
-        ImGui::End();
+    ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f));
+    ImGui::PopStyleColor();
+    ImGui::End();
 
-        ImGui::Begin("CenterUI", nullptr, CenterFlags);
-        if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
-        {
-            dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
-        }
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(60, 70));
 
-        ImVec2 avail_size = ImGui::GetContentRegionAvail();
-        ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(textureID)), avail_size, ImVec2(0, 1), ImVec2(1, 0));
+    ImGui::Begin("MainMenu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+    ImGui::PopStyleVar();
+    if (ImGuiDockNode *dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+    {
+        dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoResize;
+    }
+    MainMenuButtons();
+    ImGui::End();
 
-        ImGui::End();
+    ImGui::Begin("LeftUI", nullptr, ImGuiWindowFlags_NoResize);
+    if (ImGuiDockNode *dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+    {
+        dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
+    }
+    ImGui::Text("");
+    ImGui::End();
 
-        ImGui::Begin("DownUI", nullptr, ImGuiWindowFlags_NoResize);
-        if (ImGuiDockNode* dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
-        {
-            dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
-        }
-        ImGui::Text("");
-        ImGui::End();
+    ImGui::Begin("RightUI", nullptr, ImGuiWindowFlags_NoResize);
+    if (ImGuiDockNode *dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+    {
+        dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
+    }
+    ImGui::Text("");
+    ImGui::End();
 
+    ImGui::Begin("CenterUI", nullptr, CenterFlags);
+    if (ImGuiDockNode *dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+    {
+        dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
+    }
+
+    ImVec2 avail_size = ImGui::GetContentRegionAvail();
+    ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(textureID)), avail_size, ImVec2(0, 1), ImVec2(1, 0));
+
+    ImGui::End();
+
+    ImGui::Begin("DownUI", nullptr, ImGuiWindowFlags_NoResize);
+    if (ImGuiDockNode *dockNode = ImGui::DockBuilderGetNode(ImGui::GetWindowDockID()))
+    {
+        dockNode->LocalFlags |= ImGuiDockNodeFlags_NoDockingOverMe | ImGuiDockNodeFlags_NoTabBar;
+    }
+    ImGui::Text("");
+    ImGui::End();
 }
 
 void UI::Console()
 {
-    ImGui::Begin("Console",nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Begin("Console", nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize);
     static char str[128] = "";
     ImGui::InputTextWithHint(" ", "command (use 'help' for show commands)", str, IM_ARRAYSIZE(str));
     ImGui::SameLine();
-    if(ImGui::Button("Send") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
+    if (ImGui::Button("Send") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
     {
         std::string cmnd = str;
-        if(cmnd == "debug")
+        if (cmnd == "debug")
         {
             spdlog::debug("Debug entry");
         }
-        if(cmnd == "help")
+        if (cmnd == "help")
         {
             spdlog::debug("help entry");
         }
-        if(cmnd == "join")
-        {   
-            
-            using json = nlohmann::json;
+        if (cmnd == "join")
+        {
+
+            /*using json = nlohmann::json;
             json j;
             j["user"] = "Habrahabr";
-            cpr::Response r = cpr::Post(cpr::Url{"http://127.0.0.1:8080/api/v1/online"}, 
+            cpr::Response r = cpr::Post(cpr::Url{"http://127.0.0.1:8080/api/v1/online"},
             cpr::Body{j.dump()},
             cpr::Header{ { "Content-Type", "application/json" } });
-            std::cout << r.text << std::endl;
+            std::cout << r.text << std::endl;*/
         }
-        if(cmnd == "ping")
+        if (cmnd == "ping")
         {
-            cpr::Response response = cpr::Get(cpr::Url{URL_API});
-            std::string json = response.text;
-            std::cout<<json;
-            std::ofstream jsapi("jsapi.json");
-            jsapi<<json;
-            jsapi.close();
-            //spdlog::debug(jsapi);
+            /* cpr::Response response = cpr::Get(cpr::Url{URL_API});
+             std::string json = response.text;
+             std::cout<<json;
+             std::ofstream jsapi("jsapi.json");
+             jsapi<<json;
+             jsapi.close();
+             //spdlog::debug(jsapi);*/
         }
         str[0] = '\0';
     }
     ImGui::End();
 }
 
-void UI::DebugMenu(float* _R, float* _G, float* _B, SDL_Window* window, GLuint textureID, bool* triangle, bool show_mobile, bool show_pc)
+void UI::About(bool *m_show)
 {
-    if(ImGui::Begin("DebugMenu", NULL, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoCollapse))
-        {   
-            static float col[3] = {0.1f,0.1f,0.1f}; 
-            ImGui::Text("Hello World");
-            if(ImGui::Button("Hi!"))
-            spdlog::info("Hello logger :)");
-            ImGui::SeparatorText("Background Color");
-            ImGui::SliderFloat("R",_R,0.0f, 1.0f);
-            ImGui::SliderFloat("G",_G,0.0f, 1.0f);
-            ImGui::SliderFloat("B",_B,0.0f, 1.0f);
-            ImGui::SeparatorText("OpenGL");
-            {
-                ImGui::Checkbox("Show/Hide Triangle", triangle);
-                ImVec2 window_size = ImGui::GetWindowSize();
-                ImGui::Image(reinterpret_cast<ImTextureID>(static_cast<uintptr_t>(textureID)), ImVec2(256,128), ImVec2(0, 1), ImVec2(1, 0));
-            }
-            ImGui::SeparatorText("Mobile mode");
-            if(ImGui::Button("Mobile"))
-            {
-                spdlog::warn("Mobile");
-                show_mobile = true;
-                show_pc = false;
-                SDL_SetWindowSize(window, 360, 640);
-            }
-            ImGui::SameLine();
-            if(ImGui::Button("PC"))
-            {
-                spdlog::warn("PC");
-                show_mobile = false;
-                show_pc = true;
-                SDL_SetWindowSize(window, 1280, 720);
-            }
-            ImGui::End(); 
-        }
+
+    ImGui::Begin("About", m_show, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDocking);
+    ImGui::Text("LDBox");
+    ImGui::BeginChild(1, ImVec2(420, 228), true);
+    ImGui::TextWrapped("MIT License\n\nCopyright (c) 2023 LakoMoor\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the 'Software'), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.");
+    ImGui::EndChild();
+
+    ImGui::Spacing();
+
+    ImGui::Text("Licenses:");
+    ImGui::Separator();
+
+    ImGui::BulletText("SDL");
+    ImGui::BulletText("GLAD");
+    ImGui::BulletText("GLM");
+    ImGui::BulletText("Dear ImGui");
+    ImGui::BulletText("spdlog");
+
+    ImGui::Spacing();
+
+    ImGui::Text("t.me/LakoMoorDev");
+    ImGui::Text("Version: %s", PROJECT_VER);
+    ImGui::End();
 }
 
-void UI::About(bool* m_show)
+void UI::HeaderMenu(SDL_Window *window, bool *debug)
 {
-            
-        ImGui::Begin("About", m_show, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoDocking);
-        ImGui::Text("LDBox");
-        ImGui::BeginChild(1, ImVec2(420,228), true);
-        ImGui::TextWrapped("MIT License\n\nCopyright (c) 2023 LakoMoor\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the 'Software'), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.");
-	    ImGui::EndChild();
-
-        ImGui::Spacing();
-
-        ImGui::Text("Licenses:");
-        ImGui::Separator();
-
-        ImGui::BulletText("SDL");
-        ImGui::BulletText("GLAD");
-        ImGui::BulletText("GLM");
-        ImGui::BulletText("Dear ImGui");
-        ImGui::BulletText("spdlog");
-
-
-        ImGui::Spacing();
-
-        ImGui::Text("t.me/LakoMoorDev");
-        ImGui::Text("Version: %s", PROJECT_VER);
-        ImGui::End();   
-}
-
-void UI::HeaderMenu(SDL_Window* window, bool* debug)
-{  
     if (ImGui::BeginMainMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if(ImGui::MenuItem("Open", NULL))
+    {
+        if (ImGui::BeginMenu("File"))
+        {
+            if (ImGui::MenuItem("Open", "Ctrl + O"))
             {
                 spdlog::warn("Empty item");
             }
-            if(ImGui::MenuItem("Logout", NULL))
+            if (ImGui::MenuItem("Save", "Ctrl + S"))
             {
-                std::remove("acc.psi");
+                spdlog::warn("Empty item");
+            }
+            if (ImGui::MenuItem("Save as", "Ctrl + Shift + S"))
+            {
+                spdlog::warn("Empty item");
+            }
+            if (ImGui::MenuItem("Exit", "Alt + F4"))
+            {
                 exit(0);
             }
-			ImGui::EndMenu();
-		}
+            ImGui::EndMenu();
+        }
         if (ImGui::BeginMenu("Tools"))
-		{
+        {
             if (ImGui::MenuItem("Debug menu"))
-            {            
+            {
                 *debug = !*debug;
             }
             ImGui::EndMenu();
-        }            
+        }
         if (ImGui::BeginMenu("Help"))
-		{
+        {
             if (ImGui::MenuItem("About"))
             {
                 show_app_about = true;
                 spdlog::debug("About loaded!");
-                //spdlog::warn("Empty item");
+                // spdlog::warn("Empty item");
             }
             if (ImGui::MenuItem("Fullscreen", "(F11)"))
             {
@@ -274,40 +243,38 @@ void UI::HeaderMenu(SDL_Window* window, bool* debug)
             }
             ImGui::EndMenu();
         }
-        ImGui::EndMainMenuBar(); 
+        ImGui::EndMainMenuBar();
     }
-    if(show_app_about){
+    if (show_app_about)
+    {
         UI::About(&show_app_about);
     }
-    
 }
 
-void UI::InitImGui(SDL_Window* window, SDL_GLContext glContext)
+void UI::InitImGui(SDL_Window *window, SDL_GLContext glContext)
 {
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.IniFilename = NULL;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable keyboard controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;    // Enable docking
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable docking
     io.ConfigViewportsNoDecoration = false;
-    #ifdef WIN32
-    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;    // Enable multi-viewports
-    #endif
-    ImVec4* colors = ImGui::GetStyle().Colors;
-
+#ifdef WIN32
+// io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;    // Enable multi-viewports
+#endif
+    ImVec4 *colors = ImGui::GetStyle().Colors;
 
     ImGui_ImplSDL2_InitForOpenGL(window, glContext);
     ImGui_ImplOpenGL3_Init();
     spdlog::debug("Init ImGui");
 }
 
-void UI::DrawImGui(SDL_Window* window)
+void UI::DrawImGui(SDL_Window *window)
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame(window);
     ImGui::NewFrame();
     ImGui::SetShortcutRouting(ImGuiMod_Ctrl | ImGuiKey_Tab, ImGuiKeyOwner_None);
-    
 }
 
 void UI::DestroyImGui()
