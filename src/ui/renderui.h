@@ -21,7 +21,7 @@ public:
 
     //Windows
     static void About(bool* m_show);
-    static void Console();
+    static void Console(int output);
 
     //Render
     static void InitImGui(SDL_Window* window, SDL_GLContext glContext);

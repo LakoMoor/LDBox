@@ -122,7 +122,7 @@ void UI::Editor(bool *m_show, SDL_Window *window, GLuint textureID)
     ImGui::End();
 }
 
-void UI::Console()
+void UI::Console(int output)
 {
     ImGui::Begin("Console", nullptr, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize);
     static char str[128] = "";
@@ -131,13 +131,23 @@ void UI::Console()
     if (ImGui::Button("Send") || ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Enter)))
     {
         std::string cmnd = str;
+
         if (cmnd == "debug")
         {
             spdlog::debug("Debug entry");
+            output = 1;
+            
+        }
+        if (cmnd == "editor")
+        {
+            spdlog::debug("Editor entry");
+            output = 2;
+   
         }
         if (cmnd == "help")
         {
-            spdlog::debug("help entry");
+            spdlog::debug("Help entry");
+            output = 3;
         }
         if (cmnd == "join")
         {
