@@ -17,7 +17,28 @@
 // Other headers
 #include <iostream>
 #include <fstream>
+int out;
 
+// Player parameters
+const float playerSize = 30.0f;
+float playerPosX = SCREEN_WIDTH / 2.0f;
+float playerPosY = SCREEN_HEIGHT / 2.0f;
+
+// Function to draw the player square
+void drawPlayer() {
+    glPushMatrix();
+    glTranslatef(playerPosX, playerPosY, 0.0f);
+    
+    glBegin(GL_QUADS);
+    glColor3f(1.0f, 0.0f, 0.0f);  // Red
+    glVertex2f(-playerSize / 2, -playerSize / 2);
+    glVertex2f(playerSize / 2, -playerSize / 2);
+    glVertex2f(playerSize / 2, playerSize / 2);
+    glVertex2f(-playerSize / 2, playerSize / 2);
+    glEnd();
+    
+    glPopMatrix();
+}
 
 int main(int argc, char* argv[])
 {
@@ -58,7 +79,12 @@ int main(int argc, char* argv[])
     
     // Setup ImGui context
     UI::InitImGui(window, glContext);
-
+    const std::vector< SDL_Vertex > verts =
+    {
+        { SDL_FPoint{ 400, 150 }, SDL_Color{ 255, 0, 0, 255 }, SDL_FPoint{ 0 }, },
+        { SDL_FPoint{ 200, 450 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 }, },
+        { SDL_FPoint{ 600, 450 }, SDL_Color{ 0, 255, 0, 255 }, SDL_FPoint{ 0 }, },
+    };
     // Set up the viewport
     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -102,7 +128,29 @@ int main(int argc, char* argv[])
                     spdlog::debug("Fullscreen case");
                     Render::Fullscreen(window);
                     continue;
+
+                case SDLK_F12:
+                    spdlog::debug("Editor case");
+                    editorui = !editorui;
+                    continue;
+                case SDLK_UP:
+                    if(playerPosY - 10.0f >= 0.0f)
+                        playerPosY -= 10.0f;
+                    break;
+                case SDLK_DOWN:
+                    if(playerPosY + playerSize + 10.0f <= SCREEN_HEIGHT)
+                        playerPosY += 10.0f;
+                    break;
+                case SDLK_LEFT:
+                    if(playerPosX - 10.0f >= 0.0f)
+                        playerPosX -= 10.0f;
+                    break;
+                case SDLK_RIGHT:
+                    if(playerPosX + playerSize + 10.0f <= SCREEN_WIDTH)
+                        playerPosX += 10.0f;
+                    break;
                 }
+               
             }            
         }
 
@@ -112,11 +160,25 @@ int main(int argc, char* argv[])
         //Clear OpenGL context
         glClearColor(R,G,B, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+         // Set up the orthographic projection matrix
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, -1, 1);
+        
+        // Switch to modelview matrix mode
+        glMatrixMode(GL_MODELVIEW);
+        
+        // Reset the modelview matrix
+        glLoadIdentity();
+        
+        // Draw the player
+        drawPlayer();
         
          // Render the SDL2 window to a texture
         glBindTexture(GL_TEXTURE_2D, textureID);
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
+        
         UI::DrawImGui(window);
 
         // start the Dear ImGui frame
@@ -129,7 +191,12 @@ int main(int argc, char* argv[])
         //ImGui::ShowStyleEditor();
         if(consoleui)
         {
-            UI::Console();
+            
+            UI::Console(out);
+            if(out == 2)
+            {
+                editorui = true;
+            }
         }
         
 
